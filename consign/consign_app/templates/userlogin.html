@@ -1,0 +1,125 @@
+{% load static %}}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Untree.co" />
+<link rel="shortcut icon" href="{% static 'img/icon.png' %}" type="image/png">
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap5" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="{% static 'fonts/icomoon/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'fonts/flaticon/font/flaticon.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'css/tiny-slider.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+    <title>
+Consignment    </title>
+  </head>
+  <body>
+    <div class="site-mobile-menu site-navbar-target">
+      <div class="site-mobile-menu-header">
+        <div class="site-mobile-menu-close">
+          <span class="icofont-close js-menu-toggle"></span>
+        </div>
+      </div>
+      <div class="site-mobile-menu-body"></div>
+    </div>
+
+
+    <div
+      class="hero page-inner overlay"
+      style="background-image: url('{% static 'images/back2.jpg' %}')"
+    >
+      <div class="container">
+        <div class="row justify-content-center align-items-center">
+          <div class="col-lg-9 text-center mt-5">
+            <h1 class="heading" data-aos="fade-up">Login</h1>
+
+            <nav
+              aria-label="breadcrumb"
+              data-aos="fade-up"
+              data-aos-delay="200"
+            >
+             <form method="post">
+                                {% csrf_token %}
+                                <p style="color:red;text-align:center;font-size:22px;font-weight:bold">{{msg}}</p>
+
+                                <label style=" font-size:30px;color:salmon;"><strong>User Name</strong></label>
+                                <input type="text" name="t1" required class="form-control" placeholder="Enter Email" style="width: 400px; margin:auto  /* Adjust width as needed */"/>
+
+                                <label style=" font-size:30px;color:salmon;"><strong>Password</strong></label>
+                                <input type="password" name="t2" required class="form-control" placeholder="Enter Password" style="width: 400px;margin:auto "/>
+                                <br/><br>
+                                <div class="hero-btns">
+                                    <input type="submit" value="Login" class="form-control btn-primary" style="width: 400px;height:50px; margin:auto /* Adjust width as needed */"/>
+                                </div>
+                            </form>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+	<!-- hero area -->
+<div class="hero-area hero-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-9 offset-lg-2 text-center">
+                <div class="hero-text">
+                    <div class="hero-text-tablecell">
+                        <div class="login-container">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end hero area -->
+
+<div class="row mt-5">
+          <div class="col-12 text-center">
+            <!--
+              **==========
+              NOTE:
+              Please don't remove this copyright link unless you buy the license here https://untree.co/license/
+              **==========
+            -->
+
+
+          </div>
+        </div>
+      </div>
+      <!-- /.container -->
+    </div>
+    <!-- /.site-footer -->
+
+    <!-- Preloader -->
+    <div id="overlayer"></div>
+    <div class="loader">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/tiny-slider.js' %}"></script>
+    <script src="{% static 'js/aos.js' %}"></script>
+    <script src="{% static 'js/navbar.js' %}"></script>
+    <script src="{% static 'js/counter.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+  </body>
+</html>
+

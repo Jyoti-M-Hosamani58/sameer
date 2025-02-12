@@ -1,0 +1,272 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Untree.co" />
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}" />
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap5" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="{% static 'fonts/icomoon/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'fonts/flaticon/font/flaticon.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'css/tiny-slider.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+    <title>Consignment</title>
+    <style>
+        table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif; /* You can change this to any suitable font */
+}
+
+        table, th, td {
+            border: 1px solid black;
+            font-size:11px;
+            color:black;
+            padding:4px;
+            text-align: center;
+        }
+
+        th, td {
+            text-align: center;
+        }
+
+        /* Print specific styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+
+            .printable, .printable * {
+                visibility: visible;
+            }
+
+            .printable {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+
+            .no-print {
+                display: none;
+            }
+        }
+        @page {
+    size: A4;
+    margin: 10px 10px 10px; /* Decrease top margin to 20px */
+}
+    </style>
+</head>
+<body>
+    <div class="site-mobile-menu site-navbar-target">
+        <div class="site-mobile-menu-header">
+            <div class="site-mobile-menu-close">
+                <span class="icofont-close js-menu-toggle"></span>
+            </div>
+        </div>
+        <div class="site-mobile-menu-body"></div>
+    </div>
+
+    {% include 'staff_nav.html' %}
+
+    <br><br><br>
+
+        <div class="row justify-content-center align-items-center">
+          <div class="col-lg-9 text-center mt-5">
+            <h1 class="heading" data-aos="fade-up">TripSheet List</h1>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+	<!-- end header -->
+    <div class="printable">
+    {% if trips %}
+    <br/>
+<div class="table-responsive">
+        <a href="javascript:void(0);" onclick="printAndDelete()" class="btn btn-danger btn-print no-print">Print</a>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th colspan="11" style="text-align: center;font-size:18px;"><strong>{{ trips.first.branch }}</strong></th>
+            </tr>
+            <tr><strong>
+                <td colspan="4">DRIVER'S NAME: {{ trips.first.DriverName }}</td>
+                <td colspan="3">DATE & TIME: {{ trips.first.Date|date:"d-m-Y" }} {{ trips.first.Time }}</td>
+                <td colspan="3">ADV GIVEN: <span id="advgiven">{{ trips.first.AdvGiven }}</span></td>
+            </strong></tr>
+            <tr>
+                <td colspan="4">VEHICLE NO.: {{ trips.first.VehicalNo }}</td>
+                <td colspan="2">DISEL RATE/LTR: <span id="ltrate">{{ trips.first.LTRate }}</span></td>
+                <td colspan="2">LTR: <span id="ltr">{{ trips.first.Ltr }}</span></td>
+                <td colspan="4">AMOUNT: <span id="total_value">{{ total_value }}</span></td>
+            </tr>
+            <tr>
+                        <td colspan="11"></td>
+                    </tr>
+            <tr>
+                <th style="width: 2%;">SL/N</th>
+                <th style="width: 5%;">LR No</th>
+                <th style="width: 3%;">QTY</th>
+                <th style="width: 12%;" colspan="2">DESC OF GOODS</th>
+                <th style="width: 3%;">DEST</th>
+                <th style="width: 19%;">CONSIGNEE</th>
+                <th style="width: 3%;">TO PAY</th>
+                <th style="width: 5%;">PAID</th>
+                <th style="width: 3%;">CSER A/C</th>
+                <th style="width: 3%;">CSGEE A/C</th>
+            </tr>
+        </thead>
+                <tbody style="border-top: none; border-bottom: none;">
+
+    {% for trip in trips %}
+    <tr style="border-top: none; border-bottom: none;">
+        <td style="border-top: none; border-bottom: none; align:center;">{{ forloop.counter }}</td>
+        <td style="border-top: none; border-bottom: none;">{{ trip.LRno }}</td>
+        <td style="border-top: none; border-bottom: none;">{{ trip.qty }}</td>
+        <td colspan="2" style="border-top: none; border-bottom: none;">{{ trip.desc }}</td>
+        <td style="border-top: none; border-bottom: none;">{{ trip.dest }}</td>
+        <td style="border-top: none; border-bottom: none;">{{ trip.consignee }}</td>
+        <td style="border-top: none; border-bottom: none;">
+            {% if trip.pay_status == 'ToPay' %}
+                {{ trip.total_cost }}
+            {% endif %}
+        </td>
+        <td style="border-top: none; border-bottom: none;">
+            {% if trip.pay_status == 'Paid' %}
+                {{ trip.total_cost }}
+            {% endif %}
+        </td>
+        <td style="border-top: none; border-bottom: none;">
+            {% if trip.pay_status == 'Consigner_AC' %}
+                {{ trip.total_cost }}
+            {% endif %}
+        </td>
+        <td style="border-top: none; border-bottom: none;">
+            {% if trip.pay_status == 'Consignee_AC' %}
+                {{ trip.total_cost }}
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2"><strong>Total:</strong></td>
+                <td colspan="4">{{ total_qty }}</td>
+                <td></td>
+                <td>{{ grand_total.ToPay }}</td>
+                <td>{{ grand_total.Paid }}</td>
+                <td>{{ grand_total.Consigner_AC }}</td>
+                <td>{{ grand_total.Consignee_AC }}</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <br/>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <td colspan="7"><strong>HEAD WISE SUMMARY</strong></td>
+            </tr>
+            <tr>
+                <td><strong>HEAD</strong></td>
+                <td><strong>OTHERS</strong></td>
+                <td><strong>FREIGHT</strong></td>
+                <td><strong>HAMALI</strong></td>
+                <td><strong>ST CHARGE</strong></td>
+                <td><strong>DOOR CHARGE</strong></td>
+                <td><strong>TOTAL</strong></td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for status, details in summary.items %}
+            <tr>
+                <td style="border-top: none; border-bottom: none;"><strong>{{ status }}</strong></td>
+                <td style="border-top: none; border-bottom: none;">{{ details.balance }}</td>
+                <td style="border-top: none; border-bottom: none;">{{ details.freight }}</td>
+                <td style="border-top: none; border-bottom: none;">{{ details.hamali }}</td>
+                <td style="border-top: none; border-bottom: none;">{{ details.st_charge }}</td>
+                <td style="border-top: none; border-bottom: none;">{{ details.door_charge }}</td>
+                <td style="border-top: none; border-bottom: none;">{{ details.total_cost }}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td><strong>Total:</strong></td>
+                <td>{{ grand_total.grand_balance }}</td>
+                <td>{{ grand_total.grand_freight }}</td>
+                <td>{{ grand_total.grand_hamali }}</td>
+                <td>{{ grand_total.grand_st_charge }}</td>
+                <td>{{ grand_total.grand_door_charge }}</td>
+                <td>{{ grand_total.grand_total }}</td>
+            </tr>
+        </tbody>
+    </table>
+{% endif %}
+    </div>
+    <script>
+         function printAndDelete() {
+        // Trigger the print dialog
+        window.print();
+
+        // Send an AJAX request to delete the data
+        $.ajax({
+            type: 'POST',
+            url: '{% url "delete_trip_sheet_data" %}', // Ensure this URL pattern matches your Django URL configuration
+            data: {
+                'vehical': '{{ request.POST.vehical }}',
+                't3': '{{ request.POST.t3 }}',
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                if (response.status === 'success') {
+                    console.log('Data deleted successfully.');
+                    // Optionally, you can redirect or notify the user
+                } else {
+                    console.error('Error deleting data: ', response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX error: ', status, error);
+            }
+        });
+    }
+    </script>
+<table border>
+
+</table>
+    <div class="no-print">
+        <div class="row mt-5">
+            <div class="col-12 text-center">
+
+            </div>
+        </div>
+        <div id="overlayer"></div>
+        <div class="loader">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static 'js/tiny-slider.js' %}"></script>
+        <script src="{% static 'js/aos.js' %}"></script>
+        <script src="{% static 'js/navbar.js' %}"></script>
+        <script src="{% static 'js/counter.js' %}"></script>
+        <script src="{% static 'js/custom.js' %}"></script>
+    </div>
+</body>
+</html>

@@ -1,0 +1,110 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Untree.co" />
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}" />
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap5" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="{% static 'fonts/icomoon/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'fonts/flaticon/font/flaticon.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'css/tiny-slider.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+    <title>Consignment</title>
+    <style>
+        /* CSS for horizontal scrolling */
+        .table-container {
+            overflow-x: auto; /* Enable horizontal scrolling */
+            -webkit-overflow-scrolling: touch; /* For smooth scrolling on iOS */
+        }
+
+        table {
+            width: 100%; /* Ensure the table takes full width */
+            min-width: 600px; /* Adjust based on the expected minimum width */
+        }
+    </style>
+
+</head>
+<body>
+    <div class="site-mobile-menu site-navbar-target">
+        <div class="site-mobile-menu-header">
+            <div class="site-mobile-menu-close">
+                <span class="icofont-close js-menu-toggle"></span>
+            </div>
+        </div>
+        <div class="site-mobile-menu-body"></div>
+    </div>
+
+    {% include 'branch_nav.html' %}
+
+    <br><br><br>
+
+      <div class="container">
+        <div class="row justify-content-center align-items-center">
+          <div class="col-lg-9 text-center mt-5">
+            <h1 class="heading" data-aos="fade-up"> Consignee List</h1>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+	<!-- end header -->
+    <div class="table-container">
+    <table style="border-collapse: collapse; width: 100%; text-align: left;">
+    <thead>
+        <tr style="background-color: #f2f2f2;">
+            <th style="border: 1px solid #ddd; padding: 8px;">Consignee Name</th>
+            <th style="border: 1px solid #ddd; padding: 8px;">Phone</th>
+            <th style="border: 1px solid #ddd; padding: 8px;">Email</th>
+            <th style="border: 1px solid #ddd; padding: 8px;">Address</th>
+            <th style="border: 1px solid #ddd; padding: 8px;">Company</th>
+            <th style="border: 1px solid #ddd; padding: 8px;">GST</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for c in consignee %}
+        <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">{{ c.receiver_name }}</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">{{ c.receiver_mobile }}</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">{{ c.receiver_email }}</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">{{ c.receiver_address }}</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">{{ c.receiver_company }}</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">{{ c.receiver_GST }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+<div class="no-print">
+        <div class="row mt-5">
+            <div class="col-12 text-center">
+
+            </div>
+        </div>
+        <div id="overlayer"></div>
+        <div class="loader">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static 'js/tiny-slider.js' %}"></script>
+        <script src="{% static 'js/aos.js' %}"></script>
+        <script src="{% static 'js/navbar.js' %}"></script>
+        <script src="{% static 'js/counter.js' %}"></script>
+        <script src="{% static 'js/custom.js' %}"></script>
+    </div>
+</body>
+</html>

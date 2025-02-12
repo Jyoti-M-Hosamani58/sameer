@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Share Location</title>
+    <script>
+      function sendLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.watchPosition(function(position) {
+            let lat = position.coords.latitude;
+            let lon = position.coords.longitude;
+
+            // Send GPS data to the server using an AJAX request
+            fetch('/update-location/', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+              },
+              body: JSON.stringify({ latitude: lat, longitude: lon })
+            })
+            .then(response => response.json())
+            .then(data => {
+              console.log('Location sent:', data);
+            })
+            .catch(error => {
+              console.error('Error sending location:', error);
+            });
+          });
+        } else {
+          alert('Geolocation is not supported by this browser.');
+        }
+      }
+    </script>
+    <script>
+  function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+  }
+
+  const csrftoken = getCookie('csrftoken');
+</script>
+<div id="map" style="height: 500px; width: 100%;"></div>
+<script>
+  function initMap() {
+    const userLocation = { lat: {{ user.latitude }}, lng: {{ user.longitude }} };
+    const map = new google.maps.Map(document.getElementById("map"), {
+      zoom: 14,
+      center: userLocation,
+    });
+    new google.maps.Marker({
+      position: userLocation,
+      map: map,
+    });
+  }
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
+
+  </head>
+  <body>
+    <h1>Share your live location</h1>
+    <button onclick="sendLocation()">Share Location</button>
+  </body>
+</html>

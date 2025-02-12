@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Track Location</title>
+</head>
+<body>
+    <h2>Track Phone Number Location</h2>
+    <form method="post">
+        {% csrf_token %}
+        <label for="phone_number">Enter Phone Number:</label>
+        <input type="text" id="phone_number" name="phone_number" required>
+        <button type="submit">Track</button>
+    </form>
+</body>
+</html>

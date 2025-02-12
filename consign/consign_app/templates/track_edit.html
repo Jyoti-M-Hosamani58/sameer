@@ -1,0 +1,183 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Responsive Bootstrap4 Shop Template, Created by Imran Hossain from https://imransdesign.com/">
+
+    <!-- title -->
+    <title>Consignment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            padding: 20px;
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+
+        }
+        button {
+            margin-top: 10px;
+        }
+        form {
+            background-color: rgba(255, 255, 255, 0.5); /* White background with 50% opacity */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+        }
+
+        .background-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            animation: changeBackground 10s infinite alternate; /* Change the duration (10s) as needed */
+        }
+
+        .content {
+            padding: 20px;
+            /* Your content styling */
+        }
+
+        @keyframes changeBackground {
+            0% { background-image: url(' static/background/back1.jpg');  }
+            20% { background-image: url('static/background/back2.jpg'); }
+            50% { background-image: url('static/background/back3.jpg'); }
+            75% { background-image: url('static/background/back4.jpg'); }
+            100% { background-image: url('static/background/back5.jpg'); }
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        table {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+        }
+
+        button {
+            margin-top: 10px;
+        }
+       @media only screen and (max-width: 600px) {
+        .container {
+            width: 100% !important;
+            padding: 10px !important;
+        }
+        .content {
+            font-size: 16px !important;
+        }
+    }
+	img{
+       max-width: 100%;
+       height: auto;
+    }
+    .button {
+    	padding: 10px 20px;
+    	font-size: 16px;
+	}
+    </style>
+    <!-- favicon -->
+    <!--<link rel="shortcut icon" type="image/png" href="{% static 'assets/img/favicon.png' %}">-->
+    <!-- google font -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
+    <!-- fontawesome -->
+    <link rel="stylesheet" href="{% static 'assets/css/all.min.css' %}">
+    <!-- bootstrap -->
+    <link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
+    <!-- owl carousel -->
+    <link rel="stylesheet" href="{% static 'assets/css/owl.carousel.css' %}">
+    <!-- magnific popup -->
+    <link rel="stylesheet" href="{% static 'assets/css/magnific-popup.css' %}">
+    <!-- animate css -->
+    <link rel="stylesheet" href="{% static 'assets/css/animate.css' %}">
+    <!-- mean menu css -->
+    <link rel="stylesheet" href="{% static 'assets/css/meanmenu.min.css' %}">
+    <!-- main style -->
+    <link rel="stylesheet" href="{% static 'assets/css/main.css' %}">
+    <!-- responsive -->
+    <link rel="stylesheet" href="{% static 'assets/css/responsive.css' %}">
+</head>
+<body>
+
+{% include 'searchTrack.html' %}
+
+<br><br>
+
+<div class="container">
+    <center><h2>Tracking Information</h2></center>
+
+    {% block content %}
+    <div class="background-container"></div>
+    <div class="content">
+
+        {% if trackers %}
+
+
+        <table class="table table-bordered tracking-table">
+            <thead>
+            <tr>
+                <th>Tracking ID</th>
+                <th>Date</th>
+                <th>Status</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            {% for tracker in trackers %}
+            <tr>
+                <td>{{ tracker.track_no }}</td>
+                <td>{{ tracker.date }}</td>
+                <td>{{ tracker.description }}</td>
+
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        {% else %}
+        <p>{{ message }}</p>
+        {% endif %}
+
+    </div>
+    {% endblock %}
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- copyright -->
+<div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 col-md-12">
+                <p>Copyrights &copy; 2024 ,  All Rights Reserved.<br>
+						Designed and Developed  By - <a href="https://flowercreeper.com/index.php">Flower Creeper</a>
+					</p>
+            </div>
+            <div class="col-lg-6 text-right col-md-12">
+                <div class="social-icons">
+                    <ul>
+                        <li><a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
+                        <li><a href="#" target="_blank"><i class="fab fa-twitter"></i></a></li>
+                        <li><a href="#" target="_blank"><i class="fab fa-instagram"></i></a></li>
+                        <li><a href="#" target="_blank"><i class="fab fa-linkedin"></i></a></li>
+                        <li><a href="#" target="_blank"><i class="fab fa-dribbble"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end copyright -->
+
+</body>
+</html>

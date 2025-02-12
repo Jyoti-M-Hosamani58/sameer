@@ -1,0 +1,254 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Untree.co" />
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}" />
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap5" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="{% static 'fonts/icomoon/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'fonts/flaticon/font/flaticon.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'css/tiny-slider.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+    <title>
+Consignment    </title>
+  </head>
+  <body>
+    <div class="site-mobile-menu site-navbar-target">
+      <div class="site-mobile-menu-header">
+        <div class="site-mobile-menu-close">
+          <span class="icofont-close js-menu-toggle"></span>
+        </div>
+      </div>
+      <div class="site-mobile-menu-body"></div>
+    </div>
+
+    {% include 'branch_nav.html' %}
+
+    <br><br><br>
+
+      <div class="container">
+        <div class="row justify-content-center align-items-center">
+          <div class="col-lg-9 text-center mt-5">
+            <h1 class="heading" data-aos="fade-up">Add TripSheet</h1>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+    // Function to set the default date to the current date
+function setCurrentDate() {
+    var today = new Date();
+    var day = today.getDate();
+    var month = today.getMonth() + 1; // Months are zero-based
+    var year = today.getFullYear();
+
+    // Format date as YYYY-MM-DD
+    var formattedDate = year + '-' + (month < 10 ? '0' + month : month) + '-' + (day < 10 ? '0' + day : day);
+
+    // Set the value of the date input
+    document.getElementById('date').value = formattedDate;
+}
+
+// Run the function when the page loads
+window.onload = setCurrentDate;
+</script>
+
+<script>
+    function disableSubmitButton() {
+        const submitButton = document.getElementById('submitButton');
+        submitButton.disabled = true; // Disable the button
+        submitButton.innerText = 'Submitting...'; // Optional: Change button text
+    }
+</script>
+	<!-- end header -->
+<div class="background-container"></div>
+    <div class="content">
+    <div id="consignmentForm" class="container">
+        <form method="post" action="{% url 'addTripSheet' %}">
+            {% csrf_token %}
+    <p style="color:red;text-align:center;font-size:22px;font-weight:bold">{{msg}}</p>
+<div class="row">
+
+
+    <div class="col-md-6">
+        <label for="dest">Destination</label>
+        <input type="text" class="form-control" id="dest" name="dest" list="dest_list" oninput="showDestDatalist()">
+        <datalist id="dest_list"></datalist>
+    </div>
+
+</div>
+
+<br/>
+<div class="col-md-3">
+    <button type="submit" value="Submit" name="submit" class="form-control btn-primary col-md-3">Submit</button>
+</div>
+        </form>
+<br/>
+        <form method="post" action="saveTripSheetList" onsubmit="disableSubmitButton()">
+                        {% csrf_token %}
+
+<div class="table-container">
+    <table style="width:100%;margin-left:20px;" border="1">
+        <thead>
+            <tr>
+                <th>
+                    <input type="checkbox" id="selectAll" checked> Select All
+                </th>
+                <th>LR.No</th>
+                <th>Quantity</th>
+                <th>Description of Goods</th>
+                <th>Destination</th>
+                <th>Consignee</th>
+                <th>Total</th>
+                <th>Payment</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for trip in trip %}
+                <tr>
+                    <td>
+                        <input type="checkbox" class="rowCheckbox" name="selected_rows" value="{{ forloop.counter }}" checked>
+                    </td>
+                    <td>{{ trip.track_id }}</td>
+                    <td>{{ trip.pieces }}</td>
+                    <td>{{ trip.desc_product }}</td>
+                    <td>{{ trip.route_to }}</td>
+                    <td>{{ trip.receiver_name }}</td>
+                    <td>{{ trip.total_cost }}</td>
+                    <td>{{ trip.pay_status }}</td>
+
+                    <!-- Hidden input fields -->
+                    <input type="hidden" name="track_id_{{ forloop.counter }}" value="{{ trip.track_id }}">
+                    <input type="hidden" name="pieces_{{ forloop.counter }}" value="{{ trip.pieces }}">
+                    <input type="hidden" name="desc_product_{{ forloop.counter }}" value="{{ trip.desc_product }}">
+                    <input type="hidden" name="route_to_{{ forloop.counter }}" value="{{ trip.route_to }}">
+                    <input type="hidden" name="receiver_name_{{ forloop.counter }}" value="{{ trip.receiver_name }}">
+                    <input type="hidden" name="pay_status_{{ forloop.counter }}" value="{{ trip.pay_status }}">
+                    <input type="hidden" name="total_cost{{ forloop.counter }}" value="{{ trip.total_cost }}">
+                    <input type="hidden" name="weightAmt{{ forloop.counter }}" value="{{ trip.weightAmt }}">
+                    <input type="hidden" name="freight{{ forloop.counter }}" value="{{ trip.freight }}">
+                    <input type="hidden" name="hamali{{ forloop.counter }}" value="{{ trip.hamali }}">
+                    <input type="hidden" name="door_charge{{ forloop.counter }}" value="{{ trip.door_charge }}">
+                    <input type="hidden" name="st_charge{{ forloop.counter }}" value="{{ trip.st_charge }}">
+                    <input type="hidden" name="balance{{ forloop.counter }}" value="{{ trip.balance }}">
+                </tr>
+            {% endfor %}
+            <input type="hidden" name="total_rows" value="{{ trip|length }}">
+        </tbody>
+    </table><br/>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const selectAllCheckbox = document.getElementById("selectAll");
+        const rowCheckboxes = document.querySelectorAll(".rowCheckbox");
+
+        // Function to update all checkboxes when 'Select All' is toggled
+        selectAllCheckbox.addEventListener("change", function () {
+            rowCheckboxes.forEach(checkbox => {
+                checkbox.checked = selectAllCheckbox.checked;
+            });
+        });
+
+        // Function to update 'Select All' checkbox based on individual checkbox selection
+        rowCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener("change", function () {
+                if (!this.checked) {
+                    selectAllCheckbox.checked = false;
+                } else {
+                    // If all are checked, select the "Select All" checkbox
+                    if (document.querySelectorAll(".rowCheckbox:checked").length === rowCheckboxes.length) {
+                        selectAllCheckbox.checked = true;
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+<button id="submitButton" type="submit" class="btn-primary btn">Save</button>
+        </form>
+<script>
+
+function showDestDatalist() {
+    const input = document.getElementById('dest');
+    const datalist = document.getElementById('dest_list');
+
+    if (input.value.length >= 2) {
+        fetch(`/get_destination?query=${encodeURIComponent(input.value)}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Fetched data:', data); // Debugging: Check the data in the console
+                datalist.innerHTML = ''; // Clear previous options
+
+                if (Array.isArray(data) && data.length > 0) {
+                    data.forEach(number => {
+                        const option = document.createElement('option');
+                        option.value = number;
+                        datalist.appendChild(option);
+                    });
+                } else {
+                    const option = document.createElement('option');
+                    option.value = 'No results';
+                    datalist.appendChild(option);
+                }
+            })
+            .catch(error => console.error('Error fetching route_to:', error));
+    } else {
+        datalist.innerHTML = ''; // Clear the datalist if fewer than 2 characters
+    }
+}
+
+</script>
+
+	<!-- Add the following script just above the closing </body> tag -->
+
+ <div class="row mt-5">
+          <div class="col-12 text-center">
+            <!--
+              **==========
+              NOTE:
+              Please don't remove this copyright link unless you buy the license here https://untree.co/license/
+              **==========
+            -->
+
+          </div>
+        </div>
+      </div>
+      <!-- /.container -->
+    </div>
+    <!-- /.site-footer -->
+
+    <!-- Preloader -->
+    <div id="overlayer"></div>
+    <div class="loader">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/tiny-slider.js' %}"></script>
+    <script src="{% static 'js/aos.js' %}"></script>
+    <script src="{% static 'js/navbar.js' %}"></script>
+    <script src="{% static 'js/counter.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+  </body>
+</html>

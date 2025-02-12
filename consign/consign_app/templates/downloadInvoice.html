@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consignment Invoice</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        td, th {
+            border: 1px solid black;
+            padding: 5px;
+            text-align: left;
+            vertical-align: top;
+        }
+        .invoice-header {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size:20px;
+            font-weight:bold;
+        }
+        body {
+      font-family: Arial, sans-serif;
+      font-size:14px;
+    }
+
+    .consignment-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px; /* Space between consignor and consignee */
+    }
+
+    .consignment-block {
+      flex: 1;
+      padding: 10px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+    }
+
+    p {
+      margin: 0;
+      padding: 0;
+    }
+    </style>
+</head>
+<body>
+
+
+
+{% if branchdetails %}
+    <p class="invoice-header">{{ branchdetails.companyname }}<br/>
+    {{ branchdetails.address }}<br/>
+    {{ branchdetails.gst }}</p>
+{% else %}
+    <p><strong>Branch information not available.</strong></p>
+{% endif %}
+
+{% for track_id, details in grouped_userdata.items %}
+    <h2>Track ID: {{ track_id }} &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Date: {{ details.date }} &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspTime: {{ details.time }}</h2>
+
+
+    <div class="consignment-container">
+    <div class="consignment-block">
+      <strong>Consignor: {{ details.sender_name }}<br/>
+      Address: {{ details.sender_address }}<br/>
+      Mobile: {{ details.sender_mobile }}<br/>
+      GST: {{ details.sender_GST }}<br/>
+      </strong>
+    </div>
+
+    <div class="consignment-block">
+      <strong>Consignee: {{ details.receiver_name }}<br/>
+      Address: {{ details.receiver_address }}<br/>
+      Mobile: {{ details.receiver_mobile }}<br/>
+      GST: {{ details.receiver_GST }}<br/>
+      </strong>
+    </div>
+  </div>
+
+    <table>
+        <tr>
+
+            <th>Pieces</th>
+            <th>Product Description</th>
+            <th>Weight</th>
+            <th>Product Invoice </th>
+            <th>Charges</th>
+        </tr>
+        {% for consignment in details.consignment_list %}
+            <tr>
+                <td style="text-align: center; font-weight:bold;">{% for consignment in details.consignment_list %} <p>{{ consignment.pieces }} </p>{% endfor %}<br/><hr>
+            Total Qty: {{ totalqty }}</td>
+        <td style="font-weight:bold;">{% for consignment in details.consignment_list %} <p>{{ consignment.desc_product }} </p>{% endfor %}<br/><hr>
+        Eway-Bill:<br/>
+        {{ consignment.eway_bill }}</td>
+
+                <td>{{ consignment.weight }}<hr></br>
+            <strong>C. Weight : </strong> <hr><br/>
+                {{ consignment.weightAmt }}</td>
+                <td>{{ consignment.prod_price }}<hr><br/>
+            <strong>Value:</strong><hr><br/>
+                {{ consignment.prod_invoice }}</td>
+                <td>Frieght:{{ consignment.freight }}</br>
+                Hamali: {{ consignment.hamali }}</br>
+                Door Charge: {{ consignment.door_charge }}</br>
+                St Charge: {{ consignment.st_charge }}</br>
+                Others: {{ consignment.balance }}<hr></br>
+                    <strong>Total: {{ consignment.total_cost }}</strong></td>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+<p style="16px;"><br/>
+    1. Company is not responsible for leakage, Damage & loose Goods<br>
+            2. Goods Booked at Owner's Risk<br>
+            3. Any complaints within 7 days.
+</p>
+
+{% endfor %}
+
+</body>
+</html>

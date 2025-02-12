@@ -1,0 +1,161 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Untree.co" />
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}" />
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap5" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="{% static 'fonts/icomoon/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'fonts/flaticon/font/flaticon.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'css/tiny-slider.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+    <title>Consignment</title>
+    <style>
+        table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif; /* You can change this to any suitable font */
+}
+
+        table, th, td {
+            border: 1px solid black;
+            font-size:10px;
+            color:black;
+        }
+
+        th, td {
+            padding: 4px;
+            text-align: left;
+        }
+
+        /* Print specific styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+
+            .printable, .printable * {
+                visibility: visible;
+            }
+
+            .printable {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="site-mobile-menu site-navbar-target">
+        <div class="site-mobile-menu-header">
+            <div class="site-mobile-menu-close">
+                <span class="icofont-close js-menu-toggle"></span>
+            </div>
+        </div>
+        <div class="site-mobile-menu-body"></div>
+    </div>
+
+    {% include 'index_menu.html' %}
+
+    <div class="hero page-inner overlay" style="background-image: url('{% static 'images/back2.jpg' %}')">
+        <div class="container">
+            <div class="row justify-content-center align-items-center">
+                <div class="col-lg-9 text-center mt-5">
+                    <h1 class="heading" data-aos="fade-up">Trip Sheet</h1>
+                    <nav aria-label="breadcrumb" data-aos="fade-up" data-aos-delay="200">
+                        <ol class="breadcrumb text-center justify-content-center">
+                            <li class="breadcrumb-item"><a href="{% url 'index' %}}">Home</a></li>
+                            <li class="breadcrumb-item active text-white-50" aria-current="page">TripSheet</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Content -->
+
+
+    <div class="text-center">
+        <h2 class="font-weight-bold">RAICHUR PARCEL SERVICES</h2>
+        <p>B.G.C. Complex, HOSPET<br>Phone: 08394-222899</p>
+    </div>
+
+    <!-- Date Range, Driver, Consignor, and Consignee Selection -->
+    <div class="container my-4">
+        <div class="row">
+            <div class="col-md-3">
+                <label for="consignor">Select Consignor Name:</label>
+                <select id="consignor" class="form-control">
+                    <option value="">Select Consignor Name</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Display Balance and Credit Amount -->
+        <div class="row mt-4">
+            <div class="col-md-3">
+                <label for="balance">Balance:</label>
+                <input type="text" id="balance" class="form-control" readonly>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-3">
+                <label for="credit_amount">Credit Amount:</label>
+                <input type="text" id="credit_amount" class="form-control">
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="row mt-4">
+            <div class="col-md-3">
+                <button id="submit_button" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </div>
+
+<div class="no-print">
+        <div class="row mt-5">
+            <div class="col-12 text-center">
+                <p>
+                    Copyright &copy;
+                    <script>
+                        document.write(new Date().getFullYear());
+                    </script>
+                    . All Rights Reserved. <br>&mdash; Designed and Developed  By -
+                    <a href="https://flowercreeper.com/index.php">FlowerCreeper</a>
+                </p>
+            </div>
+        </div>
+        <div id="overlayer"></div>
+        <div class="loader">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static 'js/tiny-slider.js' %}"></script>
+        <script src="{% static 'js/aos.js' %}"></script>
+        <script src="{% static 'js/navbar.js' %}"></script>
+        <script src="{% static 'js/counter.js' %}"></script>
+        <script src="{% static 'js/custom.js' %}"></script>
+    </div>
+</body>
+</html>

@@ -1,0 +1,94 @@
+{% load static %}}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Untree.co" />
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}" />
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap5" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="{% static 'fonts/icomoon/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'fonts/flaticon/font/flaticon.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'css/tiny-slider.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+    <title>
+Consignment    </title>
+  </head>
+  <body>
+    <div class="site-mobile-menu site-navbar-target">
+      <div class="site-mobile-menu-header">
+        <div class="site-mobile-menu-close">
+          <span class="icofont-close js-menu-toggle"></span>
+        </div>
+      </div>
+      <div class="site-mobile-menu-body"></div>
+    </div>
+
+    <!-- end header -->
+
+    <div class="background-container"></div>
+    <div class="content container">
+        <h1 class="text-center">Consignment Tracker</h1>
+
+        <form method="GET" action="{% url 'branchsearch_results' %}" class="mx-auto" style="max-width: 600px;">
+            <div class="form-group">
+                <label for="tracking_number">Tracking Number:</label>
+                <input type="text" class="form-control" id="tracking_number" name="tracker_id" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Search Track</button>
+        </form>
+
+        <!-- Display recent consignments -->
+        <div class="recent-consignments">
+            <h2>Recent Consignments</h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Consignment Number</th>
+                        <th>Sender</th>
+                        <th>Receiver</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for consignment in consignments %}
+                    <tr>
+                        <td>{{ consignment.track_id }}</td>
+                        <td>{{ consignment.Consignment_id }}</td>
+                        <td>{{ consignment.sender_name }}</td>
+                        <td>{{ consignment.receiver_name }}</td>
+                        <td>{{ consignment.date }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5">No recent consignments available.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Your existing scripts -->
+
+</body>
+</html>

@@ -1,0 +1,178 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Untree.co" />
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}" />
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap5" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="{% static 'fonts/icomoon/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'fonts/flaticon/font/flaticon.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'css/tiny-slider.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+    <title>Consignment</title>
+    <style>
+        table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif; /* You can change this to any suitable font */
+}
+
+        table, th, td {
+            border: 1px solid black;
+            font-size:10px;
+            color:black;
+        }
+
+        th, td {
+            padding: 4px;
+            text-align: left;
+        }
+
+        /* Print specific styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+
+            .printable, .printable * {
+                visibility: visible;
+            }
+
+            .printable {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="site-mobile-menu site-navbar-target">
+        <div class="site-mobile-menu-header">
+            <div class="site-mobile-menu-close">
+                <span class="icofont-close js-menu-toggle"></span>
+            </div>
+        </div>
+        <div class="site-mobile-menu-body"></div>
+    </div>
+
+    {% include 'index_menu.html' %}
+
+<br><br><br>
+
+      <div class="container">
+        <div class="row justify-content-center align-items-center">
+          <div class="col-lg-9 text-center mt-5">
+            <h1 class="heading" data-aos="fade-up">Add Expenses</h1>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+	<!-- end header -->
+     <script>
+    // Function to set the default date to the current date
+    function setCurrentDate() {
+        var today = new Date();
+        var day = today.getDate();
+        var month = today.getMonth() + 1; // Months are zero-based
+        var year = today.getFullYear();
+
+        // Format date as YYYY-MM-DD
+        var formattedDate = year + '-' + (month < 10 ? '0' + month : month) + '-' + (day < 10 ? '0' + day : day);
+
+        // Set the value of the date input
+        document.getElementById('date').value = formattedDate;
+    }
+
+    // Run the function when the page loads
+    window.onload = setCurrentDate;
+
+
+function calculateTax() {
+    var gstValue = parseFloat(document.getElementById('gst').value) || 0;
+    var halfGst = (gstValue / 2).toFixed(2);
+
+    document.getElementById('cgst').value = halfGst;
+    document.getElementById('sgst').value = halfGst;
+}
+
+    </script>
+    <!-- Content-->
+<form method="post" action="{% url 'saveadminExpenses' %}">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-3">
+            <label>Date</label>
+            <input type="date" class="form-control" id="date" name="date">
+        </div>
+        <div class="col-md-3">
+            <label>Amount</label>
+            <input type="text" class="form-control" id="amt" name="amt">
+        </div>
+        <div class="col-md-3">
+            <label>Description</label>
+            <input type="text" class="form-control" id="reason" name="reason" oninput="toggleSalaryField()">
+        </div>
+        <div class="col-md-3" id="salaryContainer" style="display: none;">
+            <label>Salary Details</label>
+            <input type="text" class="form-control" id="salaryDetails" name="salaryDetails">
+        </div>
+
+        <div class="col-md-3">
+            <br><button type="submit" class="form-control btn-primary">Save</button>
+        </div>
+    </div>
+</form>
+<script>
+function toggleSalaryField() {
+    const reasonInput = document.getElementById('reason');
+    const salaryContainer = document.getElementById('salaryContainer');
+
+    if (reasonInput.value.toLowerCase() === 'salary') {
+        salaryContainer.style.display = 'block';
+    } else {
+        salaryContainer.style.display = 'none';
+    }
+}
+</script>
+
+    <div class="no-print">
+        <div class="row mt-5">
+            <div class="col-12 text-center">
+
+            </div>
+        </div>
+        <div id="overlayer"></div>
+        <div class="loader">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static 'js/tiny-slider.js' %}"></script>
+        <script src="{% static 'js/aos.js' %}"></script>
+        <script src="{% static 'js/navbar.js' %}"></script>
+        <script src="{% static 'js/counter.js' %}"></script>
+        <script src="{% static 'js/custom.js' %}"></script>
+    </div>
+</body>
+</html>

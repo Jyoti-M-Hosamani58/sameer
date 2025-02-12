@@ -1,0 +1,157 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Untree.co" />
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}" />
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap5" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="{% static 'fonts/icomoon/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'fonts/flaticon/font/flaticon.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'css/tiny-slider.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+    <title>
+Consignment    </title>
+  </head>
+  <body>
+    <div class="site-mobile-menu site-navbar-target">
+      <div class="site-mobile-menu-header">
+        <div class="site-mobile-menu-close">
+          <span class="icofont-close js-menu-toggle"></span>
+        </div>
+      </div>
+      <div class="site-mobile-menu-body"></div>
+    </div>
+
+    {% include 'staff_nav.html' %}
+<br><br><br>
+
+      <div class="container">
+        <div class="row justify-content-center align-items-center">
+          <div class="col-lg-9 text-center mt-5">
+            <h1 class="heading" data-aos="fade-up"> TripSheet</h1>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+    // Function to set the default date to the current date
+    function setCurrentDate() {
+        var today = new Date();
+        var day = today.getDate();
+        var month = today.getMonth() + 1; // Months are zero-based
+        var year = today.getFullYear();
+
+        // Format date as YYYY-MM-DD
+        var formattedDate = year + '-' + (month < 10 ? '0' + month : month) + '-' + (day < 10 ? '0' + day : day);
+
+        // Set the value of the date input
+        document.getElementById('t3').value = formattedDate;
+    }
+
+    // Run the function when the page loads
+    window.onload = setCurrentDate;
+
+    </script>
+	<!-- end header -->
+ <div class="container">
+        <!-- Form -->
+        <form method="POST" class="centered-form" action="{% url 'staffTripSheetList' %}">
+            {% csrf_token %}
+               <div class="row">
+        <div class="col-md-3">
+    <label for="vehicalno">Vehicle No</label>
+    <input type="text" class="form-control" id="vehicalno" name="vehical" list="vehicle_numbers" oninput="showDatalist()">
+    <datalist id="vehicle_numbers"></datalist>
+</div>
+            <div class="col-md-3">
+                <label for="t3">Date</label>
+                <input type="date" name="t3" id="t3" class="form-control">
+            </div>
+<div class="col-md-3">
+    <br>
+            <button type="submit" class="btn btn-success" style="width: 100%;">Search</button>
+                    </div>
+               </div>
+        </form>
+
+
+            </div>
+    <script>
+        function showDatalist() {
+    const input = document.getElementById('vehicalno');
+    const datalist = document.getElementById('vehicle_numbers');
+
+    if (input.value.length >= 2) {
+        fetch(`/get_vehicle_numbers?query=${encodeURIComponent(input.value)}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Fetched data:', data); // Debugging: Check the data in the console
+                datalist.innerHTML = ''; // Clear previous options
+
+                if (Array.isArray(data) && data.length > 0) {
+                    data.forEach(number => {
+                        const option = document.createElement('option');
+                        option.value = number;
+                        datalist.appendChild(option);
+                    });
+                } else {
+                    const option = document.createElement('option');
+                    option.value = 'No results';
+                    datalist.appendChild(option);
+                }
+            })
+            .catch(error => console.error('Error fetching vehicle numbers:', error));
+    } else {
+        datalist.innerHTML = ''; // Clear the datalist if fewer than 2 characters
+    }
+}
+    </script>
+<div class="row mt-5">
+          <div class="col-12 text-center">
+            <!--
+              **==========
+              NOTE:
+              Please don't remove this copyright link unless you buy the license here https://untree.co/license/
+              **==========
+            -->
+          </div>
+        </div>
+      </div>
+      <!-- /.container -->
+    </div>
+    <!-- /.site-footer -->
+
+    <!-- Preloader -->
+    <div id="overlayer"></div>
+    <div class="loader">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/tiny-slider.js' %}"></script>
+    <script src="{% static 'js/aos.js' %}"></script>
+    <script src="{% static 'js/navbar.js' %}"></script>
+    <script src="{% static 'js/counter.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+  </body>
+</html>
+

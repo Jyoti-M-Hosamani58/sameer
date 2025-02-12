@@ -1,0 +1,279 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Untree.co" />
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}" />
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap5" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="{% static 'fonts/icomoon/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'fonts/flaticon/font/flaticon.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'css/tiny-slider.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <title>Consignment List</title>
+    <style>
+        /* Add some basic styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .header-row {
+            font-weight: bold;
+        }
+        .view-button {
+            background-color: #4CAF50; /* Green */
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .view-button:hover {
+            background-color: #45a049; /* Darker green */
+        }
+    </style>
+    <script>
+        function filterConsignments() {
+            var input, filter, table, rows, td, i, shouldShow;
+            input = document.getElementById("consignorSearch");
+            filter = input.value.toLowerCase();
+            table = document.getElementById("consignmentTable");
+            rows = table.getElementsByTagName("tr");
+
+            for (i = 1; i < rows.length; i++) {
+                td = rows[i].getElementsByTagName("td")[1]; // Adjust column index if necessary
+                if (td) {
+                    shouldShow = td.textContent || td.innerText;
+                    if (shouldShow.toLowerCase().indexOf(filter) > -1) {
+                        rows[i].style.display = "";
+                    } else {
+                        rows[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="site-mobile-menu site-navbar-target">
+        <div class="site-mobile-menu-header">
+            <div class="site-mobile-menu-close">
+                <span class="icofont-close js-menu-toggle"></span>
+            </div>
+        </div>
+        <div class="site-mobile-menu-body"></div>
+    </div>
+
+    {% include 'index_menu.html' %}
+
+  <br><br><br>
+
+      <div class="container">
+        <div class="row justify-content-center align-items-center">
+          <div class="col-lg-9 text-center mt-5">
+            <h1 class="heading" data-aos="fade-up"> Consignment List</h1>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+	<!-- end header -->
+<script>
+function showConsignorDatalist() {
+    const input = document.getElementById('senderName');
+    const datalist = document.getElementById('consignor_name');
+
+    if (input.value.length >= 2) {
+        fetch(`/get_consignor_name?query=${encodeURIComponent(input.value)}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Fetched data:', data); // Debugging: Check the data in the console
+                datalist.innerHTML = ''; // Clear previous options
+
+                if (Array.isArray(data) && data.length > 0) {
+                    data.forEach(number => {
+                        const option = document.createElement('option');
+                        option.value = number;
+                        datalist.appendChild(option);
+                    });
+                } else {
+                    const option = document.createElement('option');
+                    option.value = 'No results';
+                    datalist.appendChild(option);
+                }
+            })
+            .catch(error => console.error('Error fetching vehicle numbers:', error));
+    } else {
+        datalist.innerHTML = ''; // Clear the datalist if fewer than 2 characters
+    }
+}
+function showConsigneeDatalist() {
+    const input = document.getElementById('receiverName');
+    const datalist = document.getElementById('consignee_name');
+
+    if (input.value.length >= 2) {
+        fetch(`/get_consignee_name?query=${encodeURIComponent(input.value)}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Fetched data:', data); // Debugging: Check the data in the console
+                datalist.innerHTML = ''; // Clear previous options
+
+                if (Array.isArray(data) && data.length > 0) {
+                    data.forEach(number => {
+                        const option = document.createElement('option');
+                        option.value = number;
+                        datalist.appendChild(option);
+                    });
+                } else {
+                    const option = document.createElement('option');
+                    option.value = 'No results';
+                    datalist.appendChild(option);
+                }
+            })
+            .catch(error => console.error('Error fetching vehicle numbers:', error));
+    } else {
+        datalist.innerHTML = ''; // Clear the datalist if fewer than 2 characters
+    }
+}
+
+function showConsignorDatalist() {
+    const input = document.getElementById('senderName');
+    const datalist = document.getElementById('consignor_name');
+
+    if (input.value.length >= 2) {
+        fetch(`/get_consignor_name?query=${encodeURIComponent(input.value)}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Fetched data:', data); // Debugging: Check the data in the console
+                datalist.innerHTML = ''; // Clear previous options
+
+                if (Array.isArray(data) && data.length > 0) {
+                    data.forEach(number => {
+                        const option = document.createElement('option');
+                        option.value = number;
+                        datalist.appendChild(option);
+                    });
+                } else {
+                    const option = document.createElement('option');
+                    option.value = 'No results';
+                    datalist.appendChild(option);
+                }
+            })
+            .catch(error => console.error('Error fetching vehicle numbers:', error));
+    } else {
+        datalist.innerHTML = ''; // Clear the datalist if fewer than 2 characters
+    }
+}
+</script>
+    <!-- Search input for filtering consignments -->
+<form method="get" action="{% url 'partywise_list' %}">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-3">
+            <label>From Date</label>
+            <input type="date" class="form-control" id="from_date" name="from_date">
+        </div>
+        <div class="col-md-3">
+            <label>To Date</label>
+            <input type="date" class="form-control" id="to_date" name="to_date">
+        </div>
+        <div class="col-md-3">
+            <label for="senderName">Consigner</label>
+            <input type="text" id="senderName" name="sender_name" class="form-control" list="consignor_name" oninput="showConsignorDatalist()" onchange="fetchSenderDetails()">
+            <datalist id="consignor_name"></datalist> <!-- Container for the suggestions -->
+        </div>
+        <div class="col-md-3">
+            <label>Consignee</label>
+            <input type="text" id="receiverName" name="consignee" placeholder="Consignee" class="form-control"  list="consignee_name" oninput="showConsigneeDatalist()" onchange="fetchRecDetails()"  >
+            <datalist id="consignee_name"></datalist><br>
+
+        </div>
+
+        <div class="col-md-3">
+            <br>
+            <button type="submit" class="form-control btn-primary">Search</button>
+        </div>
+    </div>
+</form>
+
+    <!-- Display consignments grouped by sender -->
+    <h2>Consignments by Sender</h2>
+    {% if consignments_by_sender  %}
+        <table id="consignmentTable">
+            <thead>
+                <tr>
+                    <th>SI. No</th>
+                    <th>Consigner</th>
+                    <th>Total Qty</th>
+                    <th>Total Cost</th>
+                    <th>Track ID Count</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in consignments_by_sender  %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ item.sender_name }}</td>
+                        <td>{{ item.total_pieces }}</td>
+                        <td>{{ item.total_cost }}</td>
+                        <td>{{ item.track_id_count }}</td>
+                        <td>
+                                <a href="{% url 'partywise_detail' item.sender_name %}?from_date={{ from_date }}&to_date={{ to_date }}" class="view-button">View</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                <tr class="header-row">
+                    <td colspan="2">Grand Total:</td>
+                    <td>{{ grand_total_qty }}</td>
+                    <td>{{ grand_total_cost }}</td>
+                    <td>{{ grand_total_track_id_count }}</td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    {% else %}
+        <p>No consignments found.</p>
+    {% endif %}
+
+<div class="no-print">
+        <div class="row mt-5">
+            <div class="col-12 text-center">
+            </div>
+        </div>
+        <div id="overlayer"></div>
+        <div class="loader">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static 'js/tiny-slider.js' %}"></script>
+        <script src="{% static 'js/aos.js' %}"></script>
+        <script src="{% static 'js/navbar.js' %}"></script>
+        <script src="{% static 'js/counter.js' %}"></script>
+        <script src="{% static 'js/custom.js' %}"></script>
+    </div>
+</body>
+</html>

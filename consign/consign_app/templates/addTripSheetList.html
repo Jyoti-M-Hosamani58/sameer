@@ -1,0 +1,340 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Untree.co" />
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}" />
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap5" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="{% static 'fonts/icomoon/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'fonts/flaticon/font/flaticon.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'css/tiny-slider.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+    <title>
+Consignment    </title>
+       <style>
+        /* CSS for horizontal scrolling */
+        .table-container {
+            overflow-x: auto; /* Enable horizontal scrolling */
+            -webkit-overflow-scrolling: touch; /* For smooth scrolling on iOS */
+        }
+
+        table {
+            width: 100%; /* Ensure the table takes full width */
+            min-width: 600px; /* Adjust based on the expected minimum width */
+        }
+    </style>
+  </head>
+  <body>
+    <div class="site-mobile-menu site-navbar-target">
+      <div class="site-mobile-menu-header">
+        <div class="site-mobile-menu-close">
+          <span class="icofont-close js-menu-toggle"></span>
+        </div>
+      </div>
+      <div class="site-mobile-menu-body"></div>
+    </div>
+
+    {% include 'branch_nav.html' %}
+
+<br><br><br>
+
+      <div class="container">
+        <div class="row justify-content-center align-items-center">
+          <div class="col-lg-9 text-center mt-5">
+            <h1 class="heading" data-aos="fade-up">Add TripSheet</h1>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+     <script>
+    // Function to set the default date to the current date
+function setCurrentDate() {
+    var today = new Date();
+    var day = today.getDate();
+    var month = today.getMonth() + 1; // Months are zero-based
+    var year = today.getFullYear();
+
+    // Format date as YYYY-MM-DD
+    var formattedDate = year + '-' + (month < 10 ? '0' + month : month) + '-' + (day < 10 ? '0' + day : day);
+
+    // Set the value of the date input
+    document.getElementById('date').value = formattedDate;
+}
+
+// Run the function when the page loads
+window.onload = setCurrentDate;
+</script>
+	<h2 class="text-center">Trip Sheet</h2>
+<form method="POST" action="{% url 'addTripSheetList' %}">
+    {% csrf_token %}
+    <div class="col-md-3">
+        <label for="date">Select Date:</label>
+        <input type="date" id="date" class="form-control" name="date" required>
+    </div>
+
+    <h3>Assign Positions to Destinations</h3>
+
+    {% if unique_destinations %}
+        {% for dest in unique_destinations %}
+            <label>{{ dest }}</label>
+            <input type="number" name="position_{{ dest }}" required>
+            <br>
+        {% endfor %}
+    {% else %}
+        <p>No destinations available.</p>
+    {% endif %}
+
+    <button type="submit">Submit</button>
+</form>
+
+
+   <form method="POST" action="{% url 'saveTripSheet' %}" onsubmit="disableSubmitButton()">
+    {% csrf_token %}
+    <!-- Vehicle and Driver Information -->
+    <div class="row">
+        <div class="col-md-3">
+            <label for="vehicalno">Vehicle No</label>
+            <input type="text" class="form-control" id="vehicalno" required name="vehical" list="vehicle_numbers" oninput="showDatalist()">
+            <datalist id="vehicle_numbers"></datalist>
+        </div>
+        <div class="col-md-3">
+            <label for="drivername">Driver Name</label>
+            <input type="text" class="form-control" id="drivername" required name="drivername" list="drivername_list" oninput="showDriverDatalist()">
+            <datalist id="drivername_list"></datalist>
+        </div>
+        <div class="col-md-3">
+            <label for="advance">Advance</label>
+            <input type="text" class="form-control" id="advance" name="advance">
+        </div>
+        <div class="col-md-3">
+            <label for="ltrate">Liter Rate</label>
+            <input type="text" class="form-control" id="ltrate" name="ltrate">
+        </div>
+        <div class="col-md-3">
+            <label for="liter">Liter</label>
+            <input type="text" class="form-control" id="liter" name="liter">
+        </div>
+    </div>
+
+    <br/>
+
+
+<br/>
+
+{% if no_data_found %}
+    <p>No data found for the selected date.</p>
+{% endif %}
+
+<!-- Trip Sheet Table -->
+{% if trip %}
+
+        <div class="table-container">
+            <table style="width:100%;margin-left:20px;" border="1">
+                <thead>
+                    <tr>
+                        <th>LR.No</th>
+                        <th>Description of Goods</th>
+                        <th>Quantity</th>
+                        <th>Destination</th>
+                        <th>Consignee</th>
+                        <th>Total</th>
+                        <th>Payment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for consignment in trip %}
+                        <tr>
+
+                            <td>{{ consignment.track_id }}</td>
+                            <td>{{ consignment.desc }}</td>
+                            <td>{{ consignment.qty }}</td>
+                            <td>{{ consignment.dest }}</td>
+                            <td>{{ consignment.consignee }}</td>
+                            <td>{{ consignment.total_cost }}</td>
+                            <td>{{ consignment.pay_status }}</td>
+                            <td>
+                <!-- Delete button with a JavaScript function -->
+                <button type="button" class="btn btn-danger btn-sm" onclick="deleteConsignment('{{ consignment.track_id }}')">
+                    Delete
+                </button>
+            </td>
+
+                            <!-- Hidden input fields to store the values for the Save button -->
+                            <input type="hidden" name="track_id_{{ forloop.counter }}" value="{{ consignment.track_id }}">
+                            <input type="hidden" name="desc_{{ forloop.counter }}" value="{{ consignment.desc }}">
+                            <input type="hidden" name="qty_{{ forloop.counter }}" value="{{ consignment.qty }}">
+                            <input type="hidden" name="dest_{{ forloop.counter }}" value="{{ consignment.dest }}">
+                            <input type="hidden" name="consignee_{{ forloop.counter }}" value="{{ consignment.consignee }}">
+                            <input type="hidden" name="username_{{ forloop.counter }}" value="{{ consignment.username }}">
+                            <input type="hidden" name="total_cost_{{ forloop.counter }}" value="{{ consignment.total_cost }}">
+                            <input type="hidden" name="pay_status_{{ forloop.counter }}" value="{{ consignment.pay_status }}">
+                            <input type="hidden" name="branch_{{ forloop.counter }}" value="{{ consignment.branch }}">
+                            <input type="hidden" name="freight_{{ forloop.counter }}" value="{{ consignment.freight }}">
+                            <input type="hidden" name="hamali_{{ forloop.counter }}" value="{{ consignment.hamali }}">
+                            <input type="hidden" name="st_charge_{{ forloop.counter }}" value="{{ consignment.st_charge }}">
+                            <input type="hidden" name="weightAmt_{{ forloop.counter }}" value="{{ consignment.weightAmt }}">
+                            <input type="hidden" name="balance_{{ forloop.counter }}" value="{{ consignment.balance }}">
+                        </tr>
+                    {% endfor %}
+                    <input type="hidden" name="total_rows" value="{{ trip|length }}">
+                </tbody>
+            </table>
+        </div>
+        <br/>
+        <!-- Save Button -->
+        <button type="submit" id="submitButton" class="btn btn-success">Save</button>
+    </form>
+{% endif %}
+<script>
+    function deleteConsignment(track_id) {
+        if (confirm("Are you sure you want to delete this consignment?")) {
+            fetch("{% url 'delete_consignment' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify({ track_id: track_id })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Consignment deleted successfully!");
+                    location.reload(); // Reload the page to reflect changes
+                } else {
+                    alert("Failed to delete consignment.");
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    }
+</script>
+
+<script>
+    function disableSubmitButton() {
+        const submitButton = document.getElementById('submitButton');
+        submitButton.disabled = true; // Disable the button
+        submitButton.innerText = 'Submitting...'; // Optional: Change button text
+    }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const noDataFound = "{{ no_data_found }}";
+        if (noDataFound === 'True') {
+            alert('No data found for the selected date and destination.');
+            window.location.href = "{% url 'addTripSheet' %}";  // Redirect to addTripSheet after alert
+        }
+    });
+
+    function showDriverDatalist() {
+        const input = document.getElementById('drivername');
+        const datalist = document.getElementById('drivername_list');
+
+        if (input.value.length >= 2) {
+            fetch(`/get_driver_name?query=${encodeURIComponent(input.value)}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Fetched data:', data); // Debugging: Check the data in the console
+                    datalist.innerHTML = ''; // Clear previous options
+
+                    if (Array.isArray(data) && data.length > 0) {
+                        data.forEach(number => {
+                            const option = document.createElement('option');
+                            option.value = number;
+                            datalist.appendChild(option);
+                        });
+                    } else {
+                        const option = document.createElement('option');
+                        option.value = 'No results';
+                        datalist.appendChild(option);
+                    }
+                })
+                .catch(error => console.error('Error fetching vehicle numbers:', error));
+        } else {
+            datalist.innerHTML = ''; // Clear the datalist if fewer than 2 characters
+        }
+    }
+
+    function showDatalist() {
+        const input = document.getElementById('vehicalno');
+        const datalist = document.getElementById('vehicle_numbers');
+
+        if (input.value.length >= 2) {
+            fetch(`/get_vehicle_numbers?query=${encodeURIComponent(input.value)}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Fetched data:', data); // Debugging: Check the data in the console
+                    datalist.innerHTML = ''; // Clear previous options
+
+                    if (Array.isArray(data) && data.length > 0) {
+                        data.forEach(number => {
+                            const option = document.createElement('option');
+                            option.value = number;
+                            datalist.appendChild(option);
+                        });
+                    } else {
+                        const option = document.createElement('option');
+                        option.value = 'No results';
+                        datalist.appendChild(option);
+                    }
+                })
+                .catch(error => console.error('Error fetching vehicle numbers:', error));
+        } else {
+            datalist.innerHTML = ''; // Clear the datalist if fewer than 2 characters
+        }
+    }
+</script>
+
+
+	<!-- Add the following script just above the closing </body> tag -->
+
+ <div class="row mt-5">
+          <div class="col-12 text-center">
+            <!--
+              **==========
+              NOTE:
+              Please don't remove this copyright link unless you buy the license here https://untree.co/license/
+              **==========
+            -->
+
+
+          </div>
+        </div>
+      </div>
+      <!-- /.container -->
+    </div>
+    <!-- /.site-footer -->
+
+    <!-- Preloader -->
+    <div id="overlayer"></div>
+    <div class="loader">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/tiny-slider.js' %}"></script>
+    <script src="{% static 'js/aos.js' %}"></script>
+    <script src="{% static 'js/navbar.js' %}"></script>
+    <script src="{% static 'js/counter.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+  </body>
+</html>

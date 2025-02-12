@@ -1,0 +1,236 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Untree.co" />
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}" />
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap5" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="{% static 'fonts/icomoon/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'fonts/flaticon/font/flaticon.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'css/tiny-slider.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+    <title>
+Consignment    </title>
+  </head>
+  <body>
+    <div class="site-mobile-menu site-navbar-target">
+      <div class="site-mobile-menu-header">
+        <div class="site-mobile-menu-close">
+          <span class="icofont-close js-menu-toggle"></span>
+        </div>
+      </div>
+      <div class="site-mobile-menu-body"></div>
+    </div>
+
+{% include 'index_menu.html' %}
+
+    <br><br><br>
+
+      <div class="container">
+        <div class="row justify-content-center align-items-center">
+          <div class="col-lg-9 text-center mt-5">
+            <h1 class="heading" data-aos="fade-up">Add TripSheet</h1>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+    // Function to set the default date to the current date
+function setCurrentDate() {
+    var today = new Date();
+    var day = today.getDate();
+    var month = today.getMonth() + 1; // Months are zero-based
+    var year = today.getFullYear();
+
+    // Format date as YYYY-MM-DD
+    var formattedDate = year + '-' + (month < 10 ? '0' + month : month) + '-' + (day < 10 ? '0' + day : day);
+
+    // Set the value of the date input
+    document.getElementById('date').value = formattedDate;
+    document.getElementById('ddate').value = formattedDate;
+}
+
+// Run the function when the page loads
+window.onload = setCurrentDate;
+</script><!-- End Sidebar -->
+<!-- End Navbar -->
+    <script>
+    function disableSubmitButton() {
+        const submitButton = document.getElementById('submitButton');
+        submitButton.disabled = true; // Disable the button
+        submitButton.innerText = 'Submitting...'; // Optional: Change button text
+    }
+</script>
+    <script>
+    function ddisableSubmitButton() {
+        const submitButton = document.getElementById('dsubmitButton');
+        submitButton.disabled = true; // Disable the button
+        submitButton.innerText = 'Submitting...'; // Optional: Change button text
+    }
+</script>
+</div><br/> <br/> <br/> <br/>
+<form method="post" action="{% url 'save_credit_ledger' %}" onsubmit="disableSubmitButton()">
+    {% csrf_token %}
+    <div class="container">
+        <div class="page-inner">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Credit Ledger</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+
+                                        <label for="date">Date:</label>
+                                        <input type="date" class="form-control" id="date" name="date" required><br><br>
+                                    </div>
+                                </div>
+
+                                <div id="creditFields" class="hidden">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="credit">Credit:</label>
+                                                <input type="text" class="form-control" id="credit" name="credit">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="creditDesc">Credit Description:</label>
+                                                <input type="text" class="form-control" id="creditDesc"
+                                                       name="creditDesc">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="creditAmt">Credit Amount:</label>
+                                                <input type="number" class="form-control" step="0.01" id="creditAmt"
+                                                       name="creditAmt">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card-action">
+                                    <button id="submitButton" class="btn btn-success">Submit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<br/>
+<form method="post" action="{% url 'save_debit_ledger' %}" onsubmit="ddisableSubmitButton()">
+    {% csrf_token %}
+    <div class="container">
+        <div class="page-inner">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Debit Ledger</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+
+                                        <label for="date">Date:</label>
+                                        <input type="date" class="form-control" id="ddate" name="date" required><br><br>
+                                    </div>
+                                </div>
+
+
+                                <div id="debitFields" class="hidden">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="debit">Debit:</label>
+                                                <input type="text" class="form-control" id="debit" name="debit">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="debitDesc">Debit Description:</label>
+                                                <input type="text" class="form-control" id="debitDesc" name="debitDesc">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="debitAmt">Debit Amount:</label>
+                                                <input type="number" class="form-control" step="0.01" id="debitAmt"
+                                                       name="debitAmt">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card-action">
+                                    <button id="dsubmitButton" class="btn btn-success">Submit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+</form>
+	<!-- Add the following script just above the closing </body> tag -->
+
+ <div class="row mt-5">
+          <div class="col-12 text-center">
+            <!--
+              **==========
+              NOTE:
+              Please don't remove this copyright link unless you buy the license here https://untree.co/license/
+              **==========
+            -->
+
+          </div>
+        </div>
+      </div>
+      <!-- /.container -->
+    </div>
+    <!-- /.site-footer -->
+
+    <!-- Preloader -->
+    <div id="overlayer"></div>
+    <div class="loader">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/tiny-slider.js' %}"></script>
+    <script src="{% static 'js/aos.js' %}"></script>
+    <script src="{% static 'js/navbar.js' %}"></script>
+    <script src="{% static 'js/counter.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+  </body>
+</html>

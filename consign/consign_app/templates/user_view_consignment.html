@@ -1,0 +1,194 @@
+{% load static %}}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Untree.co" />
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}" />
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap5" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="{% static 'fonts/icomoon/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'fonts/flaticon/font/flaticon.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'css/tiny-slider.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+    <title>
+Consignment    </title>
+  </head>
+  <body>
+    <div class="site-mobile-menu site-navbar-target">
+      <div class="site-mobile-menu-header">
+        <div class="site-mobile-menu-close">
+          <span class="icofont-close js-menu-toggle"></span>
+        </div>
+      </div>
+      <div class="site-mobile-menu-body"></div>
+    </div>
+
+    {% include 'user_menu.html' %}
+
+    <div
+      class="hero page-inner overlay"
+      style="background-image: url('{% static 'images/hero_bg_1.jpg' %}')"
+    >
+      <div class="container">
+        <div class="row justify-content-center align-items-center">
+          <div class="col-lg-9 text-center mt-5">
+            <h1 class="heading" data-aos="fade-up">View Consignment</h1>
+
+            <nav
+              aria-label="breadcrumb"
+              data-aos="fade-up"
+              data-aos-delay="200"
+            >
+              <ol class="breadcrumb text-center justify-content-center">
+                <li class="breadcrumb-item"><a href="{% url 'index' %}}">Home</a></li>
+                <li
+                  class="breadcrumb-item active text-white-50"
+                  aria-current="page"
+                >
+                  View Consignment
+                </li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+<!-- end header -->
+<div class="background-container"></div>
+<div class="content">
+    <div class="container" style=" width: 100%; overflow-x: auto;">
+        <h2>Consignment Details</h2>
+        <div class="table-container">
+            <div class="table-wrapper">
+                <form method="get" style="width:1700px">
+                    <table class="table table-striped table-bordered">
+                        <colgroup>
+                            <col style="width: 10%;"> <!-- Adjust the width as needed -->
+                            <col style="width: 15%;">
+                            <col style="width: 10%;">
+                            <col style="width: 15%;">
+                            <col style="width: 15%;">
+                            <col style="width: 10%;">
+                            <col style="width: 15%;">
+                            <col style="width: 15%;">
+                            <col style="width: 20%;">
+                            <col style="width: 15%;">
+                        </colgroup>
+                        <thead class="table-dark">
+                        <tr>
+                            <th scope="col">Tracking Number</th>
+                            <th scope="col">From</th>
+                            <th scope="col">To</th>
+                            <th scope="col">Product</th>
+                            <th scope="col">Qty</th>
+                            <th scope="col">Weight</th>
+                            <th scope="col">Sender Name</th>
+                            <th scope="col">Sender Mobile</th>
+                            <th scope="col">Sender Address</th>
+                            <th scope="col">Receive Namer</th>
+                            <th scope="col">Receiver Mobile</th>
+                            <th scope="col">Receiver Address</th>
+                            <th scope="col">Receiver Company Address</th>
+                            <th>GST</th>
+                            <th scope="col">Freight</th>
+                            <th scope="col">Hamali</th>
+                            <th scope="col">Door Charge</th>
+                            <th scope="col">ST Charge</th>
+                            <th scope="col">Cost</th>
+                            <th>Pay status</th>
+                            <th scope="col">Date</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        {% for r in userdata %}
+                        <tr class="custom-row">
+                            <td>{{r.track_id}}</td>
+                            <td>{{r.route_from}}</td>
+                            <td>{{r.route_to}}</td>
+                            <td>{{r.desc_product}}</td>
+                            <td>{{r.qty}}</td>
+                            <td>{{r.weight}}</td>
+                            <td>{{r.sender_name}}</td>
+                            <td>{{r.sender_mobile}}</td>
+                            <td>{{r.sender_address}}</td>
+                            <td>{{r.receiver_name}}</td>
+                            <td>{{r.receiver_mobile}}</td>
+                            <td>{{r.receiver_address}}</td>
+                            <td>{{r.receiver_company}}</td>
+                            <td>{{r.gst}}</td>
+                            <td>{{r.freight}}</td>
+                            <td>{{r.hamali}}</td>
+                            <td>{{r.door_charge}}</td>
+                            <td>{{r.st_charge}}</td>
+                            <td>{{r.total_cost}}</td>
+                            <td>{{r.pay_status}}</td>
+                            <td>{{r.date}}</td>
+
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+          <div class="col-12 text-center">
+            <!--
+              **==========
+              NOTE:
+              Please don't remove this copyright link unless you buy the license here https://untree.co/license/
+              **==========
+            -->
+
+            <p>
+              Copyright &copy;
+              <script>
+                document.write(new Date().getFullYear());
+              </script>
+              . All Rights Reserved. <br>&mdash; Designed and Developed  By -
+              <a href="https://flowercreeper.com/index.php">FlowerCreeper</a>
+              <!-- License information: https://untree.co/license/ -->
+            </p>
+
+          </div>
+        </div>
+      </div>
+      <!-- /.container -->
+    </div>
+    <!-- /.site-footer -->
+
+    <!-- Preloader -->
+    <div id="overlayer"></div>
+    <div class="loader">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/tiny-slider.js' %}"></script>
+    <script src="{% static 'js/aos.js' %}"></script>
+    <script src="{% static 'js/navbar.js' %}"></script>
+    <script src="{% static 'js/counter.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+  </body>
+</html>
+

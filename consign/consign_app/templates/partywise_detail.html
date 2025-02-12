@@ -1,0 +1,138 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Untree.co" />
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}" />
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap5" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="{% static 'fonts/icomoon/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'fonts/flaticon/font/flaticon.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'css/tiny-slider.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+    <title>Consignment</title>
+      <style>
+        /* CSS for horizontal scrolling */
+        .table-container {
+            overflow-x: auto; /* Enable horizontal scrolling */
+            -webkit-overflow-scrolling: touch; /* For smooth scrolling on iOS */
+        }
+
+        table {
+            width: 100%; /* Ensure the table takes full width */
+            min-width: 600px; /* Adjust based on the expected minimum width */
+        }
+    </style>
+    <style>
+        /* Optional: Add some styling for better visibility */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="site-mobile-menu site-navbar-target">
+        <div class="site-mobile-menu-header">
+            <div class="site-mobile-menu-close">
+                <span class="icofont-close js-menu-toggle"></span>
+            </div>
+        </div>
+        <div class="site-mobile-menu-body"></div>
+    </div>
+
+    {% include 'index_menu.html' %}
+
+  <br><br><br>
+
+      <div class="container">
+        <div class="row justify-content-center align-items-center">
+          <div class="col-lg-9 text-center mt-5">
+            <h1 class="heading" data-aos="fade-up">Consignment Details for {{ sender_name }}</h1>
+
+
+          </div>
+        </div>
+      </div>
+    </div><br><br>
+	<!-- end header -->
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% else %}
+            <table border="">
+                <thead>
+                    <tr>
+                        <th>SI. No</th>
+                        <th>Track ID</th>
+                        <th>Shipper Name</th>
+                        <th>Receiver Name</th>
+                        <th>Date</th>
+                        <th>Route From</th>
+                        <th>Route To</th>
+                        <th>Weight</th>
+                        <th>Branch</th>
+                        <th>Name</th>
+                        <th>Eway Bill</th>
+                        <th>Total Cost</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for consignment in consignments %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ consignment.track_id }}</td>
+                            <td>{{ consignment.sender_name }}</td>
+                            <td>{{ consignment.receiver_name }}</td>
+                            <td>{{ consignment.date }}</td>
+                            <td>{{ consignment.route_from }}</td>
+                            <td>{{ consignment.route_to }}</td>
+
+                            <td>{{ consignment.weight }}</td>
+                            <td>{{ consignment.branch }}</td>
+                            <td>{{ consignment.name }}</td>
+                            <td>{{ consignment.eway_bill }}</td>
+                            <td>{{ consignment.total_cost }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+<div class="no-print">
+        <div class="row mt-5">
+            <div class="col-12 text-center">
+            </div>
+        </div>
+        <div id="overlayer"></div>
+        <div class="loader">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static 'js/tiny-slider.js' %}"></script>
+        <script src="{% static 'js/aos.js' %}"></script>
+        <script src="{% static 'js/navbar.js' %}"></script>
+        <script src="{% static 'js/counter.js' %}"></script>
+        <script src="{% static 'js/custom.js' %}"></script>
+    </div>
+</body>
+</html>
+

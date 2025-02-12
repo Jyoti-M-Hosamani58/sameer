@@ -1,0 +1,476 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Untree.co" />
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}" />
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap5" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="{% static 'fonts/icomoon/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'fonts/flaticon/font/flaticon.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'css/tiny-slider.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+    <title>
+Consignment    </title>
+      <style>
+          .suggestions-box {
+    border: 1px solid #ddd;
+    max-height: 150px;
+    overflow-y: auto;
+    background-color: white;
+    position: absolute;
+    width: 100%;
+    z-index: 1000;
+}
+
+.suggestions-box ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.suggestions-box li {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.suggestions-box li:hover {
+    background-color: #f0f0f0;
+}
+
+      </style>
+  </head>
+  <body>
+    <div class="site-mobile-menu site-navbar-target">
+      <div class="site-mobile-menu-header">
+        <div class="site-mobile-menu-close">
+          <span class="icofont-close js-menu-toggle"></span>
+        </div>
+      </div>
+      <div class="site-mobile-menu-body"></div>
+    </div>
+
+    {% include 'branch_nav.html' %}
+<br><br><br>
+     <div class="container">
+        <div class="row justify-content-center align-items-center">
+          <div class="col-lg-9 text-center mt-5">
+            <h1 class="heading" data-aos="fade-up">Edit Consignment</h1>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+<div class="background-container"></div>
+    <div class="content">
+    <div id="consignmentForm" class="container">
+        <form method="post">
+            {% csrf_token %}
+    <p style="color:red;text-align:center;font-size:22px;font-weight:bold">{{msg}}</p>
+            <div class="row">
+			<div class="col-md-6">
+
+                    <input type="text" id="from" value="{{ userdata.route_from }}" name="from" placeholder="From" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <input type="text" id="to" name="to" value="{{ userdata.route_to }}" placeholder="To" class="form-control" required><br>
+            </div>
+        </div>
+            <div class="row g-3">
+
+<div class="col-md-6">
+    <h3>Consigner Details</h3><br>
+    <input type="text" id="senderName" name="a1" value="{{ userdata.sender_name }}" class="form-control" placeholder="Consigner" required list="consignor_name" oninput="showConsignorDatalist()" onchange="fetchSenderDetails()">
+    <datalist id="consignor_name"></datalist></br> <!-- Container for the suggestions -->
+    <input type="text" id="senderAddress" name="a4" value="{{ userdata.sender_address }}" placeholder="Consigner Address" class="form-control"></br>
+
+    <input type="tel" id="senderMobile" name="a2" value="{{ userdata.sender_mobile }}" placeholder="Consigner Mobile" class="form-control" required></br>
+
+    <input type="text" id="sendergst" name="sendergst" value="{{ userdata.sender_GST }}" placeholder="Consigner GST" class="form-control"></br>
+
+
+
+</div>
+
+
+                <div class="col-md-6">
+                    <h3>Consignee Details:</h3><br>
+                    <input type="text" id="receiverName" name="a5" value="{{ userdata.receiver_name }}" placeholder="Consignee" class="form-control" required list="consignee_name" oninput="showConsigneeDatalist()" onchange="fetchRecDetails()"  >
+                    <datalist id="consignee_name"></datalist><br>
+                   <input type="text" id="receiverAddress" name="a8" value="{{ userdata.receiver_address }}" placeholder="Consignee Address" class="form-control">
+<br>
+                    <input type="tel" id="receiverMobile" name="a6" value="{{ userdata.receiver_mobile }}" placeholder="Consignee Mobile" class="form-control" pattern="{0-9}"required>
+<br>
+                    <input type="text" id="receivergst" name="receivergst" value="{{ userdata.receiver_GST }}" placeholder="Consignee GST" class="form-control">
+</br>
+
+               </div>
+				<br>
+				<div class="col-md-6">
+    <h3>Product Details:</h3><br>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Sl.No</th>
+                <th>No of Pieces</th>
+                <th>Product Name</th>
+
+            </tr>
+        </thead>
+        <tbody id="productTableBody">
+            {% if products %}
+                {% for p in products %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td> <!-- Serial number -->
+                        <td><input type="number" name="pieces[]" value="{{ p.pieces }}" class="form-control"></td>
+                        <td><input type="hidden" name="product_id[]" value="{{ p.id }}"> <!-- Hidden field for product ID -->
+                            <input type="text" name="product[]" value="{{ p.desc_product }}" class="form-control"></td>
+
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+    <input type="hidden" name="total_products" value="{{ products|length }}">
+
+<script>
+// Function to dynamically add more product rows
+function addProductRow() {
+    const tableBody = document.getElementById('productTableBody');
+    const rowCount = tableBody.rows.length + 1;
+
+    const newRow = `
+        <tr>
+            <td>${rowCount}</td>
+            <td><input type="text" name="product[]" class="form-control" placeholder="Product Name"></td>
+            <td><input type="number" name="pieces[]" class="form-control" placeholder="No of Pieces"></td>
+        </tr>`;
+
+    tableBody.insertAdjacentHTML('beforeend', newRow);
+}
+</script>
+
+                    <div class="col-md-6">
+
+                <input type="text" class="form-control" placeholder="Invoice No" value="{{ userdata.prod_invoice }}" id="prod_invoice" name="prod_invoice">
+<br>
+                <input type="text" class="form-control" placeholder="Invoice Value" value="{{ userdata.prod_price }}" id="prod_price" name="prod_price">
+<br>
+                        <div id="billNoContainer" style="display: none;">
+        <input type="text" class="form-control" placeholder="E-Way Bill No" id="bill_no" name="ewaybill_no">
+    </div>
+
+			</div>
+                    </br>
+</div>
+
+				<div class="col-md-6">
+                    <h3>Charge Details:</h3><br>
+  <input type="text" class="form-control" placeholder="Weight" id="weight" value="{{ userdata.weight }}" name="weight">
+<br>
+    				<input type="text" name="weightAmt" placeholder="Charged Weight" value="{{ userdata.weightAmt }}" id="weightAmt" class="form-control">
+<br>
+
+                    <input type="text" id="freight" name="freight" placeholder="Freight" value="{{ userdata.freight }}"   class="form-control" required>
+<br>
+                    <input type="text" id="hamali" name="hamali" placeholder="Hamali Charge" value="{{ userdata.hamali }}"  class="form-control" >
+<br>
+                    <input id="door_charge" name="door_charge" placeholder="Door Charge" value="{{ userdata.door_charge }}" class="form-control" />
+<br>
+                    <input id="st_charge" name="st_charge" placeholder="ST Charge" value="{{ userdata.st_charge }}" class="form-control" />
+<br>
+                    <input id="bal" name="bal"  placeholder="Balance" value="{{ userdata.balance }}" class="form-control" />
+<br>
+					<input id="total" name="cost" placeholder="Total" value="{{ userdata.total_cost }}" class="form-control" required/>
+<br>
+
+                     <label>Payment Mode</label>
+			<select name="payment" id="payment">
+				<option value="{{ userdata.pay_status }}">{{ userdata.pay_status }}</option>
+    			<option value="Paid">Paid</option>
+                <option value="Consigner_AC">Consigner Account</option>
+                <option value="Consignee_AC">Consignee Account</option>
+                <option value="ToPay">To Pay</option>
+
+            </select></br></br>
+
+                </div>
+
+            </div>
+            <div class="row">
+
+
+                </div>
+           <!-- Checkboxes for copies -->
+
+
+      <div class="form-group">
+       <label>Delivery:</label><br>
+
+    <div class="form-check form-check-inline">
+    <input type="radio" id="godown" name="delivery_option" value="godown" class="form-check-input">
+    <label for="godown" class="form-check-label">Godown</label>
+</div>
+
+<div class="form-check form-check-inline">
+    <input type="radio" id="partydoor" name="delivery_option" value="partydoor" checked class="form-check-input">
+    <label for="partydoor" class="form-check-label">Party Door</label>
+</div>
+
+
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+
+        </form>
+
+	</div>
+
+
+
+    </div>
+	<!-- Add the following script just above the closing </body> tag -->
+<script>
+
+function validateForm() {
+    const billNo = document.getElementById('bill_no');
+    if (billNo && billNo.style.display !== 'none' && !billNo.value) {
+        billNo.setCustomValidity('E-Way Bill No is required.');
+    } else {
+        billNo.setCustomValidity('');
+    }
+}
+
+document.querySelector('form').addEventListener('submit', validateForm);
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const prodPriceField = document.getElementById('prod_price');
+    const billNoContainer = document.getElementById('billNoContainer');
+
+    function checkPrice() {
+    const price = parseFloat(prodPriceField.value) || 0;
+    if (price > 49999) {
+        billNoContainer.style.display = 'block';
+    } else {
+        billNoContainer.style.display = 'none';
+        document.getElementById('bill_no').value = ''; // Clear value when hidden
+    }
+}
+
+    // Attach event listener
+    prodPriceField.addEventListener('input', checkPrice);
+
+    // Initial check on page load
+    checkPrice();
+});
+
+
+
+function showDatalist() {
+    const input = document.getElementById('vehicalno');
+    const datalist = document.getElementById('vehicle_numbers');
+
+    if (input.value.length >= 2) {
+        fetch(`/get_vehicle_numbers?query=${encodeURIComponent(input.value)}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Fetched data:', data); // Debugging: Check the data in the console
+                datalist.innerHTML = ''; // Clear previous options
+
+                if (Array.isArray(data) && data.length > 0) {
+                    data.forEach(number => {
+                        const option = document.createElement('option');
+                        option.value = number;
+                        datalist.appendChild(option);
+                    });
+                } else {
+                    const option = document.createElement('option');
+                    option.value = 'No results';
+                    datalist.appendChild(option);
+                }
+            })
+            .catch(error => console.error('Error fetching vehicle numbers:', error));
+    } else {
+        datalist.innerHTML = ''; // Clear the datalist if fewer than 2 characters
+    }
+}
+
+
+
+function showConsigneeDatalist() {
+    const input = document.getElementById('receiverName');
+    const datalist = document.getElementById('consignee_name');
+
+    if (input.value.length >= 2) {
+        fetch(`/get_consignee_name?query=${encodeURIComponent(input.value)}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Fetched data:', data); // Debugging: Check the data in the console
+                datalist.innerHTML = ''; // Clear previous options
+
+                if (Array.isArray(data) && data.length > 0) {
+                    data.forEach(number => {
+                        const option = document.createElement('option');
+                        option.value = number;
+                        datalist.appendChild(option);
+                    });
+                } else {
+                    const option = document.createElement('option');
+                    option.value = 'No results';
+                    datalist.appendChild(option);
+                }
+            })
+            .catch(error => console.error('Error fetching vehicle numbers:', error));
+    } else {
+        datalist.innerHTML = ''; // Clear the datalist if fewer than 2 characters
+    }
+}
+// New function to fetch sender details when a name is selected
+function fetchRecDetails() {
+    const receiverName = document.getElementById('receiverName').value;
+
+    if (senderName) {
+        fetch(`/get_rec_details?name=${encodeURIComponent(receiverName)}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Fetched sender details:', data); // Debugging: Check the data in the console
+
+                // Populate the form fields with the fetched data
+                document.getElementById('receiverMobile').value = data.receiver_mobile || '';
+                document.getElementById('receivergst').value = data.receiver_GST || '';
+                document.getElementById('receiverAddress').value = data.receiver_address || '';
+            })
+            .catch(error => console.error('Error fetching sender details:', error));
+    }
+}
+function showConsignorDatalist() {
+    const input = document.getElementById('senderName');
+    const datalist = document.getElementById('consignor_name');
+
+    if (input.value.length >= 2) {
+        fetch(`/get_consignor_name?query=${encodeURIComponent(input.value)}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Fetched data:', data); // Debugging: Check the data in the console
+                datalist.innerHTML = ''; // Clear previous options
+
+                if (Array.isArray(data) && data.length > 0) {
+                    data.forEach(number => {
+                        const option = document.createElement('option');
+                        option.value = number;
+                        datalist.appendChild(option);
+                    });
+                } else {
+                    const option = document.createElement('option');
+                    option.value = 'No results';
+                    datalist.appendChild(option);
+                }
+            })
+            .catch(error => console.error('Error fetching vehicle numbers:', error));
+    } else {
+        datalist.innerHTML = ''; // Clear the datalist if fewer than 2 characters
+    }
+}
+
+// New function to fetch sender details when a name is selected
+function fetchSenderDetails() {
+    const senderName = document.getElementById('senderName').value;
+
+    if (senderName) {
+        fetch(`/get_sender_details?name=${encodeURIComponent(senderName)}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Fetched sender details:', data); // Debugging: Check the data in the console
+
+                // Populate the form fields with the fetched data
+                document.getElementById('senderMobile').value = data.sender_mobile || '';
+                document.getElementById('sendergst').value = data.sender_GST || '';
+                document.getElementById('senderAddress').value = data.sender_address || '';            })
+            .catch(error => console.error('Error fetching sender details:', error));
+    }
+}
+</script>
+<script>
+    function calculateFreight() {
+        // Get the values for weightAmt and weight
+        let weightAmt = parseFloat(document.getElementById("weightAmt").value) || 0;
+        let weight = parseFloat(document.getElementById("weight").value) || 0;
+
+        // Calculate the freight (charge_weight * weight)
+        let freight = weightAmt * weight;
+        document.getElementById("freight").value = freight.toFixed(2);
+
+        // Recalculate the total cost
+        calculateTotalCost();
+    }
+
+    function calculateTotalCost() {
+        // Get all the relevant charges
+        let freight = parseFloat(document.getElementById("freight").value) || 0;
+        let hamali = parseFloat(document.getElementById("hamali").value) || 0;
+        let doorCharge = parseFloat(document.getElementById("door_charge").value) || 0;
+        let stCharge = parseFloat(document.getElementById("st_charge").value) || 0;
+
+        // Calculate the total cost
+        let totalCost = freight + hamali + doorCharge + stCharge;
+        document.getElementById("total").value = totalCost.toFixed(2);
+    }
+
+    // Add event listeners to calculate freight when weightAmt or weight changes
+    document.getElementById("weightAmt").addEventListener("input", calculateFreight);
+    document.getElementById("weight").addEventListener("input", calculateFreight);
+
+    // Add event listeners to recalculate total when any of the charges change
+    document.getElementById("freight").addEventListener("input", calculateTotalCost);
+    document.getElementById("hamali").addEventListener("input", calculateTotalCost);
+    document.getElementById("door_charge").addEventListener("input", calculateTotalCost);
+    document.getElementById("st_charge").addEventListener("input", calculateTotalCost);
+</script>
+ <div class="row mt-5">
+          <div class="col-12 text-center">
+            <!--
+              **==========
+              NOTE:
+              Please don't remove this copyright link unless you buy the license here https://untree.co/license/
+              **==========
+            -->
+          </div>
+        </div>
+      </div>
+      <!-- /.container -->
+    </div>
+    <!-- /.site-footer -->
+
+    <!-- Preloader -->
+    <div id="overlayer"></div>
+    <div class="loader">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/tiny-slider.js' %}"></script>
+    <script src="{% static 'js/aos.js' %}"></script>
+    <script src="{% static 'js/navbar.js' %}"></script>
+    <script src="{% static 'js/counter.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+  </body>
+</html>

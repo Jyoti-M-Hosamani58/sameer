@@ -1,0 +1,492 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Untree.co" />
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}" />
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap5" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="{% static 'fonts/icomoon/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'fonts/flaticon/font/flaticon.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'css/tiny-slider.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+    <title>
+Consignment    </title>
+      <style>
+          .suggestions-box {
+    border: 1px solid #ddd;
+    max-height: 150px;
+    overflow-y: auto;
+    background-color: white;
+    position: absolute;
+    width: 100%;
+    z-index: 1000;
+}
+
+.suggestions-box ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.suggestions-box li {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.suggestions-box li:hover {
+    background-color: #f0f0f0;
+}
+
+      </style>
+  </head>
+  <body>
+    <div class="site-mobile-menu site-navbar-target">
+      <div class="site-mobile-menu-header">
+        <div class="site-mobile-menu-close">
+          <span class="icofont-close js-menu-toggle"></span>
+        </div>
+      </div>
+      <div class="site-mobile-menu-body"></div>
+    </div>
+
+    {% include 'branch_nav.html' %}
+<br><br><br><br><br/>
+
+<script>
+    function disableSubmitButton() {
+        const submitButton = document.getElementById('submitButton');
+        submitButton.disabled = true; // Disable the button
+        submitButton.innerText = 'Submitting...'; // Optional: Change button text
+    }
+</script>
+<div class=""></div>
+    <div class="content">
+    <div id="consignmentForm" class="">
+        <form method="post" onsubmit="disableSubmitButton()">
+            {% csrf_token %}
+    <p style="color:red;text-align:center;font-size:22px;font-weight:bold">{{msg}}</p>
+
+            <div class="row">
+			<div class="col-md-2">
+
+                    <input type="text" id="from" name="from" placeholder="From" list="location_from" oninput="showFromDatalist()" required>
+                <datalist id="location_from"></datalist>
+            </div>
+            <div class="col-md-3">
+                <input type="text" id="to" name="to" placeholder="To" list="location_to" oninput="showToDatalist()"><br>
+            <datalist id="location_to"></datalist>
+            </div>
+
+        </div>
+            <div class="row g-3">
+ <div class="col-md-2">
+    <h6>CONSIGNOR</h6>
+    <input type="text" id="senderName" name="a1" placeholder="Consigner" required list="consignor_name" oninput="showConsignorDatalist()" onchange="fetchSenderDetails()">
+<datalist id="consignor_name"></datalist> <!-- Container for the suggestions -->
+
+    <input type="hidden" id="senderID" name="senderid" class="form-control"></br>
+    <input type="text" id="senderAddress" name="a4" placeholder="Consigner Address"></br>
+
+    <input type="tel" id="senderMobile" pattern="[0-9]{10}" maxlength="10" name="a2" placeholder="Consigner Mobile" required></br>
+
+    <input type="text" id="sendergst" maxlength="15" name="sendergst" placeholder="Consigner GST"></br>
+</div>
+
+
+                <div class="col-md-2">
+                    <h6>CONSIGNEE</h6>
+                    <input type="text" id="receiverName" name="a5" placeholder="Consignee" required list="consignee_name" oninput="showConsigneeDatalist()" onchange="fetchRecDetails()"  >
+                    <datalist id="consignee_name"></datalist><br>
+                    <input type="hidden" id="receiverId" name="id" class="form-control">
+                   <input type="text" id="receiverAddress" name="a8" placeholder="Consignee Address">
+<br>
+                    <input type="tel" id="receiverMobile" pattern="[0-9]{10}" maxlength="10" name="a6" placeholder="Consignee Mobile" pattern="{0-9}"required>
+<br>
+                    <input type="text" id="receivergst" maxlength="15" name="receivergst" placeholder="Consignee GST">
+</br>
+
+               </div>
+
+                <div class="col-md-5    ">
+<table class="table">
+        <thead>
+            <tr>
+                <th>SL. No</th>
+                <th>No of Pieces</th>
+                <th>Product Name</th>
+            </tr>
+        </thead>
+        <tbody id="productTableBody">
+            <!-- Rows will be inserted here by JavaScript -->
+        </tbody>
+    </table>
+</div>
+
+                <div class="col-md-3">
+  <input type="text" placeholder="Weight" value="0" id="weight" oninput="calculateFreight()" name="weight" required>
+<br>
+    				<input type="text"  name="weightAmt" oninput="calculateFreight()" placeholder="Charged Weight" id="weightAmt">
+<br>
+
+                    <input type="text" oninput="calculateTotalCost()" id="freight" name="freight" placeholder="Freight"  required>
+<br>
+                    <input type="text" oninput="calculateTotalCost()" id="hamali" name="hamali" placeholder="Hamali Charge">
+<br>
+                    <input id="door_charge" oninput="calculateTotalCost()" name="door_charge" placeholder="Door Charge"/>
+<br>
+                    <input id="st_charge" oninput="calculateTotalCost()" name="st_charge" placeholder="ST Charge" value="10"/>
+<br>
+<input type="text" id="balance" oninput="calculateTotalCost()" name="balance"  />
+<br>
+					<input id="total" name="cost" placeholder="Total" required/>
+<br/>
+
+                     <label>Payment Mode</label>
+<select name="payment" id="payment" onchange="toggleAmountInput()" required>
+    <option value="">-- Select --</option>
+        <option value="ToPay">To Pay</option>
+
+    <option value="Paid">Paid</option>
+    <option value="Consigner_AC">Consigner Account</option>
+    <option value="Consignee_AC">Consignee Account</option>
+</select>
+<br>
+
+
+     </div>
+                <div class="col-md-3">
+                       <h6>INVOICE DETAILS:</h6>
+                <input type="text" placeholder="Invoice No" id="prod_invoice" name="prod_invoice">
+<br>
+                <input type="text" placeholder="Invoice Value" id="prod_price" name="prod_price">
+<br>
+                        <div id="billNoContainer" style="display: none;">
+        <input type="text" placeholder="E-Way Bill No" id="bill_no" name="ewaybill_no">
+    </div>
+                </div>
+                <div class="col-md-4">
+<div class="form-group">
+       <label>Select Copies:</label><br>
+
+    <div class="form-check form-check-inline">
+        <input type="checkbox" id="consignor_copy" name="consignor_copy" value="consignor" class="form-check-input">
+        <label for="consignor_copy" class="form-check-label">Consignor Copy</label>
+    </div>
+
+    <div class="form-check form-check-inline">
+        <input type="checkbox" id="consignee_copy" name="consignee_copy" value="consignee" checked class="form-check-input">
+        <label for="consignee_copy" class="form-check-label">Consignee Copy</label>
+    </div>
+
+    <div class="form-check form-check-inline">
+        <input type="checkbox" id="lorry_copy" name="lorry_copy" value="lorry" checked class="form-check-input">
+        <label for="lorry_copy" class="form-check-label">Lorry Copy</label>
+    </div>
+</div>
+     <div class="form-group">
+       <label>Delivery:</label><br>
+
+    <div class="form-check form-check-inline">
+    <input type="radio" id="godown" name="delivery_option" value="GODOWN" class="form-check-input">
+    <label for="godown" class="form-check-label">Godown</label>
+</div>
+
+<div class="form-check form-check-inline">
+    <input type="radio" id="partydoor" name="delivery_option" value="PARTYDOOR"  class="form-check-input">
+    <label for="partydoor" class="form-check-label">Party Door</label>
+</div>
+    <button type="submit" class="btn btn-primary" id="submitButton">Submit</button>
+
+                </div>
+
+        </form>
+
+			</div>
+                    </br>
+</div>
+
+
+                </div>
+
+            </div>
+
+
+    </div>
+
+
+	</div>
+
+
+
+    </div>
+
+	<!-- Add the following script just above the closing </body> tag -->
+<script>
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const prodPriceField = document.getElementById('prod_price');
+    const billNoContainer = document.getElementById('billNoContainer');
+
+    function checkPrice() {
+    const price = parseFloat(prodPriceField.value) || 0;
+    if (price > 49999) {
+        billNoContainer.style.display = 'block';
+    } else {
+        billNoContainer.style.display = 'none';
+        document.getElementById('bill_no').value = ''; // Clear value when hidden
+    }
+}
+
+    // Attach event listener
+    prodPriceField.addEventListener('input', checkPrice);
+
+    // Initial check on page load
+    checkPrice();
+});
+
+
+const numberOfRows = 5;
+const tbody = document.getElementById('productTableBody');
+
+for (let i = 1; i <= numberOfRows; i++) {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td>${i}</td> <!-- Serial Number -->
+        <td><input type="text" name="pieces[]"></td>
+        <td><input type="text" name="product[]"></td>
+
+    `;
+    tbody.appendChild(row);
+}
+
+
+
+function showConsigneeDatalist() {
+    const input = document.getElementById('receiverName');
+    const datalist = document.getElementById('consignee_name');
+
+    if (input.value.length >= 2) {
+        fetch(`/get_consignee_name?query=${encodeURIComponent(input.value)}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Fetched data:', data); // Debugging: Check the data in the console
+                datalist.innerHTML = ''; // Clear previous options
+
+                if (Array.isArray(data) && data.length > 0) {
+                    data.forEach(number => {
+                        const option = document.createElement('option');
+                        option.value = number;
+                        datalist.appendChild(option);
+                    });
+                } else {
+                    const option = document.createElement('option');
+                    option.value = 'No results';
+                    datalist.appendChild(option);
+                }
+            })
+            .catch(error => console.error('Error fetching vehicle numbers:', error));
+    } else {
+        datalist.innerHTML = ''; // Clear the datalist if fewer than 2 characters
+    }
+}
+// New function to fetch sender details when a name is selected
+function fetchRecDetails() {
+    const receiverName = document.getElementById('receiverName').value;
+
+    if (senderName) {
+        fetch(`/get_rec_details?name=${encodeURIComponent(receiverName)}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Fetched sender details:', data); // Debugging: Check the data in the console
+
+                // Populate the form fields with the fetched data
+                document.getElementById('receiverMobile').value = data.receiver_mobile || '';
+                document.getElementById('receivergst').value = data.receiver_GST || '';
+                document.getElementById('receiverAddress').value = data.receiver_address || '';
+            })
+            .catch(error => console.error('Error fetching sender details:', error));
+    }
+}
+function showConsignorDatalist() {
+    const input = document.getElementById('senderName');
+    const datalist = document.getElementById('consignor_name');
+
+    if (input.value.length >= 2) {
+        fetch(`/get_consignor_name?query=${encodeURIComponent(input.value)}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Fetched data:', data); // Debugging: Check the data in the console
+                datalist.innerHTML = ''; // Clear previous options
+
+                if (Array.isArray(data) && data.length > 0) {
+                    data.forEach(number => {
+                        const option = document.createElement('option');
+                        option.value = number;
+                        datalist.appendChild(option);
+                    });
+                } else {
+                    const option = document.createElement('option');
+                    option.value = 'No results';
+                    datalist.appendChild(option);
+                }
+            })
+            .catch(error => console.error('Error fetching vehicle numbers:', error));
+    } else {
+        datalist.innerHTML = ''; // Clear the datalist if fewer than 2 characters
+    }
+}
+function showFromDatalist() {
+    const input = document.getElementById('from');
+    const datalist = document.getElementById('location_from');
+
+    if (input.value.length >= 2) {
+        fetch(`/get_location?query=${encodeURIComponent(input.value)}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Fetched data:', data); // Debugging: Check the data in the console
+                datalist.innerHTML = ''; // Clear previous options
+
+                if (Array.isArray(data) && data.length > 0) {
+                    data.forEach(number => {
+                        const option = document.createElement('option');
+                        option.value = number;
+                        datalist.appendChild(option);
+                    });
+                } else {
+                    const option = document.createElement('option');
+                    option.value = 'No results';
+                    datalist.appendChild(option);
+                }
+            })
+            .catch(error => console.error('Error fetching vehicle numbers:', error));
+    } else {
+        datalist.innerHTML = ''; // Clear the datalist if fewer than 2 characters
+    }
+}
+function showToDatalist() {
+    const input = document.getElementById('to');
+    const datalist = document.getElementById('location_to');
+
+    if (input.value.length >= 2) {
+        fetch(`/get_location?query=${encodeURIComponent(input.value)}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Fetched data:', data); // Debugging: Check the data in the console
+                datalist.innerHTML = ''; // Clear previous options
+
+                if (Array.isArray(data) && data.length > 0) {
+                    data.forEach(number => {
+                        const option = document.createElement('option');
+                        option.value = number;
+                        datalist.appendChild(option);
+                    });
+                } else {
+                    const option = document.createElement('option');
+                    option.value = 'No results';
+                    datalist.appendChild(option);
+                }
+            })
+            .catch(error => console.error('Error fetching vehicle numbers:', error));
+    } else {
+        datalist.innerHTML = ''; // Clear the datalist if fewer than 2 characters
+    }
+}
+
+// New function to fetch sender details when a name is selected
+function fetchSenderDetails() {
+    const senderName = document.getElementById('senderName').value;
+
+    if (senderName) {
+        fetch(`/get_sender_details?name=${encodeURIComponent(senderName)}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Fetched sender details:', data); // Debugging: Check the data in the console
+
+                // Populate the form fields with the fetched data
+                document.getElementById('senderMobile').value = data.sender_mobile || '';
+                document.getElementById('sendergst').value = data.sender_GST || '';
+                document.getElementById('senderAddress').value = data.sender_address || '';            })
+            .catch(error => console.error('Error fetching sender details:', error));
+    }
+}
+</script>
+<script>
+ function calculateFreight() {
+        // Get the values for weightAmt and weight
+        let weightAmt = parseFloat(document.getElementById("weightAmt").value) || 0;
+        let weight = parseFloat(document.getElementById("weight").value) || 0;
+
+        // Calculate the freight (charge_weight * weight)
+        let freight = weightAmt * weight;
+        document.getElementById("freight").value = freight.toFixed(2);
+
+        // Recalculate the total cost
+        calculateTotalCost();
+    }
+
+    function calculateTotalCost() {
+        // Get all the relevant charges
+        let freight = parseFloat(document.getElementById("freight").value) || 0;
+        let hamali = parseFloat(document.getElementById("hamali").value) || 0;
+        let doorCharge = parseFloat(document.getElementById("door_charge").value) || 0;
+        let stCharge = parseFloat(document.getElementById("st_charge").value) || 0;
+
+        // Get the balance
+        let balance = parseFloat(document.getElementById("balance").value) || 0;
+
+        // Calculate the total cost including the balance
+        let totalCost = freight + hamali + doorCharge + stCharge + balance;
+        document.getElementById("total").value = totalCost.toFixed(2);
+    }
+</script>
+
+
+
+ <div class="row mt-5">
+          <div class="col-12 text-center">
+            <!--
+              **==========
+              NOTE:
+              Please don't remove this copyright link unless you buy the license here https://untree.co/license/
+              **==========
+            -->
+          </div>
+        </div>
+      </div>
+      <!-- /.container -->
+    </div>
+    <!-- /.site-footer -->
+
+    <!-- Preloader -->
+    <div id="overlayer"></div>
+    <div class="loader">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/tiny-slider.js' %}"></script>
+    <script src="{% static 'js/aos.js' %}"></script>
+    <script src="{% static 'js/navbar.js' %}"></script>
+    <script src="{% static 'js/counter.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+  </body>
+</html>

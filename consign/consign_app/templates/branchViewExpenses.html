@@ -1,0 +1,205 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Untree.co" />
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}" />
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap5" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="{% static 'fonts/icomoon/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'fonts/flaticon/font/flaticon.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'css/tiny-slider.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+    <title>Consignment</title>
+    <style>
+        table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif; /* You can change this to any suitable font */
+}
+
+        table, th, td {
+            border: 1px solid black;
+            font-size:10px;
+            color:black;
+        }
+
+        th, td {
+            padding: 4px;
+            text-align: left;
+        }
+
+        /* Print specific styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+
+            .printable, .printable * {
+                visibility: visible;
+            }
+
+            .printable {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+    <style>
+        /* CSS for horizontal scrolling */
+        .table-container {
+            overflow-x: auto; /* Enable horizontal scrolling */
+            -webkit-overflow-scrolling: touch; /* For smooth scrolling on iOS */
+        }
+
+        table {
+            width: 100%; /* Ensure the table takes full width */
+            min-width: 600px; /* Adjust based on the expected minimum width */
+        }
+    </style>
+</head>
+<body>
+    <div class="site-mobile-menu site-navbar-target">
+        <div class="site-mobile-menu-header">
+            <div class="site-mobile-menu-close">
+                <span class="icofont-close js-menu-toggle"></span>
+            </div>
+        </div>
+        <div class="site-mobile-menu-body"></div>
+    </div>
+
+    {% include 'branch_nav.html' %}
+
+    <div class="hero page-inner overlay" style="background-image: url('{% static 'images/back2.jpg' %}')">
+        <div class="container">
+            <div class="row justify-content-center align-items-center">
+                <div class="col-lg-9 text-center mt-5">
+                    <h1 class="heading" data-aos="fade-up">Trip Sheet</h1>
+                    <nav aria-label="breadcrumb" data-aos="fade-up" data-aos-delay="200">
+                        <ol class="breadcrumb text-center justify-content-center">
+                            <li class="breadcrumb-item"><a href="{% url 'index' %}}">Home</a></li>
+                            <li class="breadcrumb-item active text-white-50" aria-current="page">TripSheet</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Content -->
+ <form method="post" action="{% url 'branchViewExpenses' %}">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-3">
+            <label>From Date</label>
+            <input type="date" class="form-control" id="from_date" name="from_date" required>
+        </div>
+        <div class="col-md-3">
+            <label>To Date</label>
+            <input type="date" class="form-control" id="to_date" name="to_date" required>
+        </div>
+        <div class="col-md-3">
+            <label>&nbsp;</label> <!-- Empty label to align the button -->
+            <button type="submit" class="form-control btn btn-primary">Search</button>
+        </div>
+    </div>
+</form>
+
+    <h3>Filtered Expenses</h3>
+    <div class="table-container">
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Added By</th>
+            <th>Expense Head</th>
+            <th>Amount</th>
+            <th>Invoice No</th>
+            <th>Invoice Date</th>
+            <th>GST %</th>
+            <th>CGST %</th>
+            <th>SGST %</th>
+            <th>Company</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for expense in expenses %}
+        <tr>
+            <td>{{ expense.Date }}</td>
+            <td>{{ expense.username}}</td>
+            <td>{{ expense.Reason }}</td>
+            <td>{{ expense.Amount }}</td>
+            <td>{{ expense.Invoice_no }}</td>
+            <td>{{ expense.Invoice_date }}</td>
+            <td>{{ expense.GstPer }}</td>
+            <td>{{ expense.CGSTPer }}</td>
+            <td>{{ expense.SGSTPer }}</td>
+            <td>{{ expense.PurchaseCompany }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+    </div>
+    <script>
+        // Function to set the default date to the current date
+function setCurrentDate() {
+    var today = new Date();
+    var day = today.getDate();
+    var month = today.getMonth() + 1; // Months are zero-based
+    var year = today.getFullYear();
+
+    // Format date as YYYY-MM-DD
+    var formattedDate = year + '-' + (month < 10 ? '0' + month : month) + '-' + (day < 10 ? '0' + day : day);
+
+    // Set the value of the date input
+    document.getElementById('from_date').value = formattedDate;
+    document.getElementById('to_date').value = formattedDate;
+}
+
+// Run the function when the page loads
+window.onload = setCurrentDate;
+    </script>
+    <div class="no-print">
+        <div class="row mt-5">
+            <div class="col-12 text-center">
+                <p>
+                    Copyright &copy;
+                    <script>
+                        document.write(new Date().getFullYear());
+                    </script>
+                    . All Rights Reserved. <br>&mdash; Designed and Developed  By -
+                    <a href="https://flowercreeper.com/index.php">FlowerCreeper</a>
+                </p>
+            </div>
+        </div>
+        <div id="overlayer"></div>
+        <div class="loader">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static 'js/tiny-slider.js' %}"></script>
+        <script src="{% static 'js/aos.js' %}"></script>
+        <script src="{% static 'js/navbar.js' %}"></script>
+        <script src="{% static 'js/counter.js' %}"></script>
+        <script src="{% static 'js/custom.js' %}"></script>
+    </div>
+</body>
+</html>

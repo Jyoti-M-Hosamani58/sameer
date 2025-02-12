@@ -1,0 +1,241 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Untree.co" />
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}" />
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap5" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="{% static 'fonts/icomoon/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'fonts/flaticon/font/flaticon.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'css/tiny-slider.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+    <title>Consignment</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAeBgx9JJAK5Zl_HyvFl7_pAXNqU-bYe_U&callback=initMap" async defer></script>
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+
+     <div class="container">
+        <div class="row justify-content-center align-items-center">
+          <div  class="col-lg-9 text-center mt-5">
+            <h1 class="heading" data-aos="fade-up"> Location Sharing</h1>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+<!-- Phone number input form -->
+<form id="locationForm" onsubmit="startLocationSharing(event)">
+    <label for="phone_number">Enter Phone Number:</label>
+    <input type="text" id="phone_number" value="{{ uid }}" placeholder="Driver's Phone Number" required />
+    <button type="submit">Start Location Sharing</button>
+    <button type="button" id="stop_button" onclick="stopLocationSharing()" disabled>Stop Location Sharing</button>
+</form>
+
+<!-- Google Map container -->
+<div id="map"></div>
+
+<script>
+    let locationInterval = null;
+    let driverPhoneNumber = "";
+    let map = null;
+    let marker = null;
+
+    // Initialize Google Map
+    function initMap() {
+        const defaultLocation = { lat: 20.5937, lng: 78.9629 };  // Default location (India center)
+
+        map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 14,
+            center: defaultLocation,
+        });
+
+        marker = new google.maps.Marker({
+            position: defaultLocation,
+            map: map,
+            title: "Driver's Location",
+        });
+
+        // Check for active location sharing when the page loads
+        checkActiveLocationSharing();
+    }
+
+    // Check active location sharing status from localStorage
+    function checkActiveLocationSharing() {
+        const activeLocations = JSON.parse(localStorage.getItem('activeLocations')) || [];
+
+        // Check if any phone number has active location sharing
+        activeLocations.forEach(phoneNumber => {
+            // For each active phone number, start updating location
+            driverPhoneNumber = phoneNumber;
+            startUpdatingLocation(driverPhoneNumber);
+        });
+    }
+
+    // Start location sharing
+    function startLocationSharing(event) {
+        event.preventDefault();
+        const phoneNumber = document.getElementById("phone_number").value.trim();
+        if (!phoneNumber) {
+            alert("Please enter a phone number.");
+            return;
+        }
+
+        driverPhoneNumber = phoneNumber;
+        document.getElementById("stop_button").disabled = false;
+
+        // Add to localStorage to track this phone number
+        let activeLocations = JSON.parse(localStorage.getItem('activeLocations')) || [];
+        if (!activeLocations.includes(driverPhoneNumber)) {
+            activeLocations.push(driverPhoneNumber);
+            localStorage.setItem('activeLocations', JSON.stringify(activeLocations));
+        }
+
+        // Start updating the location
+        startUpdatingLocation(driverPhoneNumber);
+    }
+
+    // Get the real-time location from the browser and update Google Map
+    function startUpdatingLocation(phoneNumber) {
+        locationInterval = setInterval(() => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
+                        const accuracy = position.coords.accuracy;  // Get the accuracy of the location
+                        const timestamp = new Date().toISOString();  // Current timestamp in ISO format
+
+                        // If the accuracy is too low, warn the user
+                        if (accuracy > 100) {
+                            console.warn("Location accuracy is low. Consider moving to a more open area.");
+                        }
+
+                        // Update the map with the real-time location
+                        updateMap(latitude, longitude);
+
+                        // Send updated location to the server
+                        fetch(`/update_location/`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                phone_number: phoneNumber,
+                                latitude: latitude,
+                                longitude: longitude,
+                                timestamp: timestamp,
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log("Location updated:", data);
+                        })
+                        .catch(error => {
+                            console.error("Error updating location:", error);
+                            clearInterval(locationInterval);
+                            alert("Error updating location.");
+                        });
+                    },
+                    function(error) {
+                        console.error("Error fetching location:", error);
+                        clearInterval(locationInterval);
+                        alert("Unable to fetch location. Please allow location access.");
+                    },
+                    {
+                        enableHighAccuracy: true,  // Try to get the most accurate location
+                        timeout: 10000,            // Timeout after 10 seconds if no location is found
+                        maximumAge: 0              // Don't use cached location data
+                    }
+                );
+            } else {
+                console.error("Geolocation is not supported by this browser.");
+                alert("Geolocation is not supported by this browser.");
+                clearInterval(locationInterval);
+            }
+        }, 10000);  // Update every 10 seconds
+    }
+
+    // Stop location sharing
+    function stopLocationSharing() {
+        clearInterval(locationInterval);
+        document.getElementById("stop_button").disabled = true;
+
+        // Remove the phone number from localStorage
+        let activeLocations = JSON.parse(localStorage.getItem('activeLocations')) || [];
+        const index = activeLocations.indexOf(driverPhoneNumber);
+        if (index > -1) {
+            activeLocations.splice(index, 1);
+            localStorage.setItem('activeLocations', JSON.stringify(activeLocations));
+        }
+
+        // Optionally, send request to the server to stop location sharing
+        fetch(`/stop_location_sharing/${driverPhoneNumber}/`, {
+            method: 'POST',
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert("Location sharing stopped.");
+        })
+        .catch(error => {
+            console.error("Error stopping location sharing:", error);
+            alert("Error stopping location sharing.");
+        });
+    }
+
+    // Update map marker location with new position
+    function updateMap(latitude, longitude) {
+        const position = { lat: latitude, lng: longitude };
+        marker.setPosition(position);
+        map.setCenter(position);
+    }
+
+    // Cleanup active location updates when leaving the page
+    window.onbeforeunload = function() {
+        // Optionally, stop all active location updates here if desired
+        clearInterval(locationInterval);
+    }
+</script>
+
+
+<div class="no-print">
+        <div class="row mt-5">
+            <div class="col-12 text-center">
+            </div>
+        </div>
+        <div id="overlayer"></div>
+        <div class="loader">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static 'js/tiny-slider.js' %}"></script>
+        <script src="{% static 'js/aos.js' %}"></script>
+        <script src="{% static 'js/navbar.js' %}"></script>
+        <script src="{% static 'js/counter.js' %}"></script>
+        <script src="{% static 'js/custom.js' %}"></script>
+    </div>
+</body>
+</html>
+

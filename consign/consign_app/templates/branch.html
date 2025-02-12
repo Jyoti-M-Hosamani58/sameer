@@ -1,0 +1,158 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Untree.co" />
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}" />
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap5" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="{% static 'fonts/icomoon/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'fonts/flaticon/font/flaticon.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'css/tiny-slider.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+    <title>
+      Consignment
+    </title>
+         <style>
+        /* Highlighted, bold text */
+        .alert-message {
+            font-weight: bold;
+            background-color: yellow;
+            padding: 10px;
+            border-radius: 5px;
+            color: red;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+    </style>
+  </head>
+  <body>
+    <div class="site-mobile-menu site-navbar-target">
+      <div class="site-mobile-menu-header">
+        <div class="site-mobile-menu-close">
+          <span class="icofont-close js-menu-toggle"></span>
+        </div>
+      </div>
+      <div class="site-mobile-menu-body"></div>
+    </div>
+
+    {% include 'index_menu.html' %}
+
+<br><br><br><br><br><br>
+
+      <div class="container">
+        <div class="row justify-content-center align-items-center">
+          <div class="col-lg-9 text-center mt-5">
+            <h1 class="heading" data-aos="fade-up">Add Branch</h1>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+	<!-- end header -->
+    <div class="container mt-5">
+          {% if messages %}
+        <div class="alert-message">
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
+        <h2>Branch Information Form</h2>
+        <form action="/branch" method="POST" enctype="multipart/form-data">
+             {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    <label for="companyname">Company Name:</label>
+                    <input type="text" class="form-control" id="companyname" name="companyname" required>
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label for="headname">Head Name:</label>
+                    <input type="text" class="form-control" id="headname" name="headname" required>
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label for="phonenumber">Phone Number:</label>
+                    <input type="tel" class="form-control" id="phonenumber" name="phonenumber" required>
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <div class="col-md-6 form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label for="gst">GST Number:</label>
+                    <input type="text" class="form-control" id="gst" name="gst">
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label for="address">Address:</label>
+                    <textarea class="form-control" id="address" name="address" rows="3" required></textarea>
+                </div>
+
+
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+<br/>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<div class="row mt-5">
+          <div class="col-12 text-center">
+            <!--
+              **==========
+              NOTE:
+              Please don't remove this copyright link unless you buy the license here https://untree.co/license/
+              **==========
+            -->
+
+          </div>
+        </div>
+      </div>
+      <!-- /.container -->
+    </div>
+    <!-- /.site-footer -->
+
+    <!-- Preloader -->
+    <div id="overlayer"></div>
+    <div class="loader">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/tiny-slider.js' %}"></script>
+    <script src="{% static 'js/aos.js' %}"></script>
+    <script src="{% static 'js/navbar.js' %}"></script>
+    <script src="{% static 'js/counter.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+  </body>
+</html>
+

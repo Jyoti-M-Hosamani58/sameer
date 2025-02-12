@@ -1,0 +1,265 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Untree.co" />
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}" />
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap5" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="{% static 'fonts/icomoon/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'fonts/flaticon/font/flaticon.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'css/tiny-slider.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+    <title>Consignment</title>
+    <style>
+        /* CSS for horizontal scrolling */
+        .table-container {
+            overflow-x: auto; /* Enable horizontal scrolling */
+            -webkit-overflow-scrolling: touch; /* For smooth scrolling on iOS */
+        }
+
+        table {
+            width: 100%; /* Ensure the table takes full width */
+            min-width: 600px; /* Adjust based on the expected minimum width */
+        }
+    </style>
+        <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .filter-form {
+            margin-bottom: 20px;
+        }
+        .filter-form input {
+            margin-right: 10px;
+        }
+    </style>
+<style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .report {
+            flex: 1;
+            margin-right: 20px;
+        }
+        .report:last-child {
+            margin-right: 0;
+        }
+        .profit {
+            color: green;
+            font-weight: bold;
+        }
+        .loss {
+            color: red;
+            font-weight: bold;
+        }
+        #branchSearch {
+            margin-bottom: 20px;
+            padding: 5px;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="site-mobile-menu site-navbar-target">
+        <div class="site-mobile-menu-header">
+            <div class="site-mobile-menu-close">
+                <span class="icofont-close js-menu-toggle"></span>
+            </div>
+        </div>
+        <div class="site-mobile-menu-body"></div>
+    </div>
+
+    {% include 'index_menu.html' %}
+
+  <br><br><br>
+
+      <div class="container">
+        <div class="row justify-content-center align-items-center">
+          <div class="col-lg-9 text-center mt-5">
+            <h1 class="heading" data-aos="fade-up"></h1>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+	<!-- end header -->
+
+
+    <h1>Consignment and Expenses Report</h1>
+
+    <!-- Form for filtering by date range -->
+    <form method="GET" action="">
+        <div class="row">
+            <div class="col-md-3">
+        <label for="from_date">From Date:</label>
+        <input type="date" id="from_date" name="from_date" value="{{ from_date|date:'Y-m-d' }}" class="form-control">
+</div>
+            <div class="col-md-3">
+        <label for="to_date">To Date:</label>
+        <input type="date" id="to_date" name="to_date" value="{{ to_date|date:'Y-m-d' }}" class="form-control">
+</div>
+            <div class="col-md-3">
+                <label>Branch</label>
+                <input type="text" id="branchSearch" onkeyup="filterConsignments()" class="form-control" placeholder="Search by branch name">
+            </div>
+            <div class="col-md-3"><br>
+        <button type="submit" class="form-control btn-primary">Filter</button>
+        </div>
+            </div>
+    </form>
+
+    <div class="container">
+        <div class="report">
+<h2>Consignment</h2>
+            {% if consignments  %}
+                <table id="consignmentTable">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Branch</th>
+                            <th>Total Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in consignments  %}
+                            <tr>
+                                <td>{{ item.date }}</td>
+                                <td>{{ item.branch }}</td>
+                                <td>{{ item.total_cost }}</td>
+                            </tr>
+                        {% endfor %}
+                        <tr>
+                            <td colspan="2"><strong>Grand Total:</strong></td>
+                            <td><strong>{{ grand_total_consignment }}</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No consignments found.</p>
+            {% endif %}
+        </div>
+
+        <div class="report">
+            <h2>Expenses:</h2>
+            {% if expenses  %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Branch</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for expense in expenses  %}
+                            <tr>
+                                <td>{{ expense.Date }}</td>
+                                <td>{{ expense.branch }}</td>
+                                <td>{{ expense.total_amount }}</td>
+                            </tr>
+                        {% endfor %}
+                        <tr>
+                            <td colspan="2"><strong>Grand Total:</strong></td>
+                            <td><strong>{{ grand_total_expenses }}</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No expenses found.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <h2>Combined Grand Total</h2>
+    <p><strong>{{ combined_grand_total }}</strong></p>
+
+    <h2>Total Balance (Profit or Loss)</h2>
+    <p>
+        {% if profit > 0 %}
+            <span class="profit">Profit: {{ profit }}</span>
+        {% elif loss > 0 %}
+            <span class="loss">Loss: {{ loss }}</span>
+        {% endif %}
+    </p>
+
+    <script>
+        // Function to filter consignments by branch name
+        function filterConsignments() {
+            var input, filter, table, rows, td, i, txtValue;
+            input = document.getElementById("branchSearch");
+            filter = input.value.toLowerCase();
+            table = document.getElementById("consignmentTable");
+            rows = table.getElementsByTagName("tr");
+
+            for (i = 1; i < rows.length; i++) {
+                td = rows[i].getElementsByTagName("td")[2]; // Branch is in the 3rd column (index 2)
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                        rows[i].style.display = "";
+                    } else {
+                        rows[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>
+
+<div class="no-print">
+        <div class="row mt-5">
+            <div class="col-12 text-center">
+
+            </div>
+        </div>
+        <div id="overlayer"></div>
+        <div class="loader">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static 'js/tiny-slider.js' %}"></script>
+        <script src="{% static 'js/aos.js' %}"></script>
+        <script src="{% static 'js/navbar.js' %}"></script>
+        <script src="{% static 'js/counter.js' %}"></script>
+        <script src="{% static 'js/custom.js' %}"></script>
+    </div>
+</body>
+</html>
+

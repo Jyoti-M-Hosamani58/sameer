@@ -1,0 +1,220 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Untree.co" />
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}" />
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap5" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="{% static 'fonts/icomoon/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'fonts/flaticon/font/flaticon.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'css/tiny-slider.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+    <title>
+Consignment    </title>
+  </head>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            text-align: center;
+            padding: 10px;
+        }
+    </style>
+    <script src="{% static 'assets/js/plugin/webfont/webfont.min.js' %}"></script>
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'assets/css/plugins.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'assets/css/kaiadmin.min.css' %}"/>
+
+    <!-- CSS Just for demo purpose, don't include it in your project -->
+    <link rel="stylesheet" href="{% static 'assets/css/demo.css' %}"/>
+</head>
+<body>
+    <div class="site-mobile-menu site-navbar-target">
+      <div class="site-mobile-menu-header">
+        <div class="site-mobile-menu-close">
+          <span class="icofont-close js-menu-toggle"></span>
+        </div>
+      </div>
+      <div class="site-mobile-menu-body"></div>
+    </div>
+
+{% include 'index_menu.html' %}
+
+    <br><br><br>
+
+      <div class="container">
+        <div class="row justify-content-center align-items-center">
+          <div class="col-lg-9 text-center mt-5">
+            <h1 class="heading" data-aos="fade-up">Add TripSheet</h1>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+<div class="container">
+    <div class="page-inner">
+        <form method="get">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Cash Ledger</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+
+                                        <label for="from_date">From Date:</label>
+                                        <input type="date" id="from_date" class="form-control" name="from_date"
+                                               value="{{ request.GET.from_date }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+                                        <label for="to_date">To Date:</label>
+                                        <input type="date" class="form-control" id="to_date" name="to_date"
+                                               value="{{ request.GET.to_date }}">
+                                    </div>
+                                </div>
+                                <div class="card-action">
+
+                                    <button type="submit" class="btn btn-success ">Search</button>
+
+                                    <button type="submit" class="btn btn-danger " name="export" value="excel">Export to Excel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+
+        <div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Information</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table
+                            id="basic-datatables"
+                            class="display table table-striped table-hover"
+                    >
+                        <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Credit</th>
+                            <th>Credit Description</th>
+                            <th>Total Credit</th>
+                            <th>Debit</th>
+                            <th>Debit Description</th>
+                            <th>Total Debit</th>
+                            <th>Difference (Credit - Debit)</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for data in combined_data %}
+                        <tr>
+                            <!-- Date Column, no color -->
+                            <td>{{ data.date }}</td>
+
+                            <!-- Credit Columns with green background -->
+                            <td style="background-color: rgba(0, 255, 0, 0.3)">{{ data.credit }}</td>
+                            <td style="background-color: rgba(0, 255, 0, 0.3)">{{ data.creditDesc }}</td>
+                            <td style="background-color: rgba(0, 255, 0, 0.3)">{{ data.total_credit }}</td>
+
+                            <!-- Debit Columns with red background -->
+                            <td style="background-color: rgba(255, 0, 0, 0.3)">{{ data.debit }}</td>
+                            <td style="background-color: rgba(255, 0, 0, 0.3)">{{ data.debitDesc }}</td>
+                            <td style="background-color: rgba(255, 0, 0, 0.3)">{{ data.total_debit }}</td>
+
+                            <!-- Difference Column, no color -->
+                            <td>{{ data.difference }}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <th colspan="3">Grand Totals</th>
+                            <th>{{ grand_total_credit }}</th>
+                            <th colspan="2"></th>
+                            <th>{{ grand_total_debit }}</th>
+                            <th>{{ grand_total_difference }}</th>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    </div>
+<!-- End Custom template -->
+</div>
+<!--   Core JS Files   -->
+
+
+
+ <div class="row mt-5">
+          <div class="col-12 text-center">
+            <!--
+              **==========
+              NOTE:
+              Please don't remove this copyright link unless you buy the license here https://untree.co/license/
+              **==========
+            -->
+
+          </div>
+        </div>
+      </div>
+      <!-- /.container -->
+    </div>
+    <!-- /.site-footer -->
+
+    <!-- Preloader -->
+    <div id="overlayer"></div>
+    <div class="loader">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/tiny-slider.js' %}"></script>
+    <script src="{% static 'js/aos.js' %}"></script>
+    <script src="{% static 'js/navbar.js' %}"></script>
+    <script src="{% static 'js/counter.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+  </body>
+</html>

@@ -1,0 +1,158 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Untree.co" />
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}" />
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap5" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="{% static 'fonts/icomoon/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'fonts/flaticon/font/flaticon.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'css/tiny-slider.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+    <title>Diesel Report</title>
+    <style>
+        /* CSS for horizontal scrolling */
+        .table-container {
+            overflow-x: auto; /* Enable horizontal scrolling */
+            -webkit-overflow-scrolling: touch; /* For smooth scrolling on iOS */
+            margin-top: 20px; /* Add some margin to separate the table from the form */
+        }
+
+        table {
+            width: 100%; /* Ensure the table takes full width */
+            min-width: 600px; /* Adjust based on the expected minimum width */
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        .form-container {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="site-mobile-menu site-navbar-target">
+        <div class="site-mobile-menu-header">
+            <div class="site-mobile-menu-close">
+                <span class="icofont-close js-menu-toggle"></span>
+            </div>
+        </div>
+        <div class="site-mobile-menu-body"></div>
+    </div>
+
+    {% include 'index_menu.html' %}
+
+    <div class="container"><br> <br><br><br><br><br>
+        <h1>Diesel Report</h1>
+
+        <div class="form-container">
+            <form method="get" action="{% url 'disel_report' %}">
+                <div class="row">
+                    <div class="col-md-3">
+                <label for="from_date">From Date:</label>
+                <input type="date" id="from_date" name="from_date" value="{{ request.GET.from_date }}" class="form-control">
+</div>
+                    <div class="col-md-3">
+                <label for="to_date">To Date:</label>
+                <input type="date" id="to_date" name="to_date" value="{{ request.GET.to_date }}" class="form-control">
+</div>
+                        <div class="col-md-3">
+                            <br>
+                <button type="submit" class="form-control btn-primary">Filter</button>
+                            </div>
+                    </div>
+            </form>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Vehicle No</th>
+                        <th>Driver Name</th>
+                        <th>Litres</th>
+                        <th>Liter Rate</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in data %}
+                        <tr>
+                            <td>{{ entry.Date }}</td>
+                            <td>{{ entry.vehicalno }}</td>
+                            <td>{{ entry.drivername }}</td>
+                            <td>{{ entry.liter }}</td>
+                            <td>{{ entry.ltrate }}</td>
+                            <td>{{ entry.total }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="6">No data available</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <h2>Summary</h2>
+        <p style="font-weight:bold; font-size:30px;">Total Litres: {{ total_litres }}</p>
+        <p style="font-weight:bold; font-size:30px;">Total Amount: {{ total_amount }}</p>
+
+        {% if error_message %}
+            <p style="color: red;">{{ error_message }}</p>
+        {% endif %}
+    </div>
+
+    <div class="no-print">
+        <div class="row mt-5">
+            <div class="col-12 text-center">
+                <p>
+                    Copyright &copy;
+                    <script>
+                        document.write(new Date().getFullYear());
+                    </script>
+                    . All Rights Reserved. <br>&mdash; Designed and Developed By -
+                    <a href="https://flowercreeper.com/index.php">FlowerCreeper</a>
+                </p>
+            </div>
+        </div>
+        <div id="overlayer"></div>
+        <div class="loader">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static 'js/tiny-slider.js' %}"></script>
+        <script src="{% static 'js/aos.js' %}"></script>
+        <script src="{% static 'js/navbar.js' %}"></script>
+        <script src="{% static 'js/counter.js' %}"></script>
+        <script src="{% static 'js/custom.js' %}"></script>
+    </div>
+</body>
+</html>

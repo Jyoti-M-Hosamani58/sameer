@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Print Consignment</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<!-- Include html2canvas and jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <style>
+        @media print {
+            .btn-print, .btn-download, .btn-back {
+                display: none; /* Hide print/download buttons during printing */
+            }
+            @media print {
+    body {
+        margin: 0;
+        padding: 0;
+        -webkit-print-color-adjust: exact; /* For Safari */
+    }
+
+    .print-container {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        height: 100vh; /* Fill the height of the page */
+        padding: 0 20mm; /* Left and right margin */
+        box-sizing: border-box; /* Include padding in width/height */
+    }
+
+    .copy {
+        width: calc(50% - 10mm); /* Half width minus margin */
+        height: 100%; /* Full height */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Optional: add some shadow for separation */
+    }
+    #lorry-content, #invoice-content, #consignor-content{
+margin: 0; /* Reset margins here */
+            padding: 50px 0; /* Add padding to the top and bottom of the table wrapper */
+            border: 1px solid transparent; /* Prevent margin collapse */
+}
+}
+
+
+            @page {
+                size: A4;
+            margin: 60px 50px 50px;
+            }
+
+            body {
+                font-size: 12px; /* Smaller font size */
+            }
+
+            table {
+                border-collapse: collapse;
+                font-size: 12px; /* Smaller font size for tables */
+                table-layout: fixed;
+                word-wrap: break-word;
+            }
+
+            td, th {
+                border: 1px solid black;
+                padding: 0px; /* Reduce padding for compact layout */
+            }
+        }
+
+        .container {
+            page-break-inside: avoid; /* Prevent page breaks inside containers */
+        }
+
+        .invoice-header {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .flex-container {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .flex-container img {
+            max-width: 60px; /* Adjust image size */
+            height: auto;
+        }
+
+
+        .table th, .table td {
+                text-align: left;
+            vertical-align: top;
+        }
+        .flex-container {
+    display: flex;
+    align-items: flex-start; /* Align items at the start of the container (top) */
+    justify-content: flex-start; /* Align items to the start of the container (left) */
+}
+.fixed-td {
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.services-td {
+    width: 50px;  /* Set width for the services-td */
+}
+
+.agency-td {
+    width: 50px;  /* Set width for the agency-td */
+}
+
+.company-td {
+    width: 70px; /* Allow the company-td to take the remaining space */
+    flex-grow: 1; /* Allow it to grow as needed */
+    text-align: center;
+}
+
+.flex-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Ensure image is on the left and content on the right */
+    gap: 10px; /* Add space between the image and content */
+}
+
+.company-logo {
+    width: 80px;   /* Fixed width for the image */
+    height: 80px;  /* Fixed height for the image */
+    object-fit: contain; /* Ensure the image maintains its aspect ratio */
+}
+
+.company-content {
+    flex-grow: 1; /* Ensure content takes up remaining space */
+    text-align: left; /* Align content to the left within the company-content div */
+}
+
+    </style>
+</head>
+<body>
+<script>
+async function downloadPDF() {
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p', 'pt', 'a4');
+
+    const allInvoiceContent = document.getElementById('all-invoice-content'); // Updated ID
+
+    await html2canvas(allInvoiceContent, {
+        scale: 2
+    }).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        const imgWidth = pdf.internal.pageSize.getWidth();
+        const imgHeight = canvas.height * imgWidth / canvas.width;
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+        pdf.save('invoice.pdf');
+    }).catch(error => {
+        console.error('Error generating PDF:', error);
+    });
+}
+
+
+</script>
+
+
+    <a href="javascript:window.print()" class="btn btn-danger btn-print">Print</a>
+<a href="{% url 'branchviewconsignment' %}" class="btn btn-back" style="background-color: salmon; color: white;">Back</a>
+
+<button class="btn-download btn btn-primary" onclick="downloadPDF()">Download PDF</button>
+<div id="all-invoice-content">
+
+    {% if 'Consignor Copy' in copy_types %}
+    <div class="container invoice" id="invoice-content">
+        {% for track_id, details in grouped_userdata.items %}
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <p style="margin: 0;"><strong>DELIVERY AT: {{details.delivery}}</strong></p>
+                <p style="margin: 0; text-align: right;"><strong>CONSIGNEE COPY</strong></p>
+            </div>
+
+            <!-- General details to display only once -->
+            <table border="2" width="100%">
+                <tr>
+                    <td colspan="3" class="fixed-td services-td">
+                        <strong>DAILY SERVICE</strong><br>
+                        {{branchdetails.services}}
+                    </td>
+                    <td colspan="4" style="text-align: center;" class="fixed-td company-td">
+                        <div>
+                            <h3>{{ branchdetails.companyname }}<br></h3>
+                            <h5>{{ branchdetails.address }}<br>
+                                {{ branchdetails.phonenumber }}<br>
+                                GST NO.: {{ branchdetails.gst }}
+                            </h5>
+                        </div>
+                    </td>
+                    <td colspan="2" class="fixed-td agency-td">
+                        <strong>DELIVERY AGENCY</strong><br>
+                        {{branchdetails.agency}}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="5">LR No. {{ track_id }}</td>
+                    <td colspan="2">Date: {{ details.date|date:"d-m-Y" }}</td>
+                    <td colspan="2">Time: {{ details.time }}</td>
+                </tr>
+                <tr>
+                    <td colspan="5">From: {{ details.route_from }}</td>
+                    <td colspan="4">To: {{ details.route_to }}</td>
+                </tr>
+                <tr>
+                    <td colspan="6">
+                        <strong>Consignor:</strong> {{ details.sender_name }}<br>
+                        Address: {{ details.sender_address }}<br>
+                        Mobile No: {{ details.sender_mobile }}
+                    </td>
+                    <td colspan="3">
+                        <strong>Consignee:</strong> {{ details.receiver_name }}<br>
+                        Address: {{ details.receiver_address }}<br>
+                        Mobile: {{ details.receiver_mobile }}
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>QTY</strong></td>
+                    <td colspan="5"><strong>DESCRIPTION OF GOODS</strong></td>
+                    <td><strong>WEIGHT KG</strong></td>
+                    <td><strong>CHARGED</strong></td>
+                    <td><strong>AMOUNT</strong></td>
+                </tr>
+
+                <tr>
+                    <td>{% for consignment in details.consignment_list %} <p>{{ consignment.pieces }} </p>{% endfor %}</td>
+                    <td colspan="5">{% for consignment in details.consignment_list %} <p>{{ consignment.desc_product }} </p>{% endfor %}</td>
+                    <td>{{ details.weight }} <hr><strong>C. WEIGHT</strong><hr>{{ details.weightAmt }}</td>
+                    <td>
+                        Freight: <br>
+                        Hamali: <br>
+                        Door Charge: <br>
+                        ST Charge:<br/>
+                        Balance:
+                    </td>
+                    <td style="text-align: right;">
+                        {{ details.freight }}<br>
+                        {{ details.hamali }}<br>
+                        {{ details.door_charge }}<br>
+                        {{ details.st_charge }}<br>
+                        {{ details.balance }}
+                    </td>
+                </tr>
+
+                <!-- Footer details displayed only once -->
+                <tr>
+                    <td colspan="5">
+                        <strong>E-WAY BILL: {{ details.eway_bill }}</strong>
+                    </td>
+                    <td colspan="2"><strong>Pay Status: {{ details.pay_status }}</strong></td>
+                    <td><strong>Total:</strong></td>
+                    <td style="text-align: right;">{{ details.total_cost }}</td>
+                </tr>
+                <tr>
+                    <td colspan="6">
+                        1. Company is not responsible for leakage, Damage & loose Goods<br>
+                        2. Goods Booked at Owner's Risk<br>
+                        3. Any complaints within 7 days.
+                    </td>
+                    <td rowspan="3" style="text-align: right;">
+                        <strong>Generated By: {{ details.name }}</strong>
+                    </td>
+                    <td rowspan="3" colspan="2" style="text-align: right;">
+                        <strong>FOR RAICHUR PARCEL SERVICES</strong>
+                    </td>
+                </tr>
+            </table>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <hr>
+
+    {% if 'Lorry Copy' in copy_types %}
+    <div class="container invoice" id="lorry-content">
+        {% for track_id, details in grouped_userdata.items %}
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <p style="margin: 0;"><strong>DELIVERY AT: {{details.delivery}}</strong></p>
+                <p style="margin: 0; text-align: right;"><strong>CONSIGNEE COPY</strong></p>
+            </div>
+
+            <!-- General details to display only once -->
+            <table border="2" width="100%">
+                <tr>
+                    <td colspan="3" class="fixed-td services-td">
+                        <strong>DAILY SERVICE</strong><br>
+                        {{branchdetails.services}}
+                    </td>
+                    <td colspan="4" style="text-align: center;" class="fixed-td company-td">
+                        <div>
+                            <h3>{{ branchdetails.companyname }}<br></h3>
+                            <h5>{{ branchdetails.address }}<br>
+                                {{ branchdetails.phonenumber }}<br>
+                                GST NO.: {{ branchdetails.gst }}
+                            </h5>
+                        </div>
+                    </td>
+                    <td colspan="2" class="fixed-td agency-td">
+                        <strong>DELIVERY AGENCY</strong><br>
+                        {{branchdetails.agency}}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="5">LR No. {{ track_id }}</td>
+                    <td colspan="2">Date: {{ details.date|date:"d-m-Y" }}</td>
+                    <td colspan="2">Time: {{ details.time }}</td>
+                </tr>
+                <tr>
+                    <td colspan="5">From: {{ details.route_from }}</td>
+                    <td colspan="4">To: {{ details.route_to }}</td>
+                </tr>
+                <tr>
+                    <td colspan="6">
+                        <strong>Consignor:</strong> {{ details.sender_name }}<br>
+                        Address: {{ details.sender_address }}<br>
+                        Mobile No: {{ details.sender_mobile }}
+                    </td>
+                    <td colspan="3">
+                        <strong>Consignee:</strong> {{ details.receiver_name }}<br>
+                        Address: {{ details.receiver_address }}<br>
+                        Mobile: {{ details.receiver_mobile }}
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>QTY</strong></td>
+                    <td colspan="5"><strong>DESCRIPTION OF GOODS</strong></td>
+                    <td><strong>WEIGHT KG</strong></td>
+                    <td><strong>CHARGED</strong></td>
+                    <td><strong>AMOUNT</strong></td>
+                </tr>
+
+                <!-- Loop through each product individually -->
+                     <tr>
+                    <td>{% for consignment in details.consignment_list %} <p>{{ consignment.pieces }} </p>{% endfor %}</td>
+                    <td colspan="5">{% for consignment in details.consignment_list %} <p>{{ consignment.desc_product }} </p>{% endfor %}</td>
+                    <td>{{ details.weight }} <hr><strong>C. WEIGHT</strong><hr>{{ details.weightAmt }}</td>
+                    <td>
+                        Freight: <br>
+                        Hamali: <br>
+                        Door Charge: <br>
+                        ST Charge:<br/>
+                        Balance:
+                    </td>
+                    <td style="text-align: right;">
+                        {{ details.freight }}<br>
+                        {{ details.hamali }}<br>
+                        {{ details.door_charge }}<br>
+                        {{ details.st_charge }}<br>
+                        {{ details.balance }}
+                    </td>
+                </tr>
+
+                <!-- Footer details displayed only once -->
+                <tr>
+                    <td colspan="5">
+                        <strong>E-WAY BILL: {{ details.eway_bill }}</strong>
+                    </td>
+                    <td colspan="2"><strong>Pay Status: {{ details.pay_status }}</strong></td>
+                    <td><strong>Total:</strong></td>
+                    <td style="text-align: right;">{{ details.total_cost }}</td>
+                </tr>
+                <tr>
+                    <td colspan="6">
+                        1. Company is not responsible for leakage, Damage & loose Goods<br>
+                        2. Goods Booked at Owner's Risk<br>
+                        3. Any complaints within 7 days.
+                    </td>
+                    <td rowspan="3" style="text-align: right;">
+                        <strong>Generated By: {{ details.name }}</strong>
+                    </td>
+                    <td rowspan="3" colspan="2" style="text-align: right;">
+                        <strong>FOR RAICHUR PARCEL SERVICES</strong>
+                    </td>
+                </tr>
+            </table>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <hr>
+
+{% if 'Consignee Copy' in copy_types %}
+    <div class="container invoice" id="consignor-content">
+        {% for track_id, details in grouped_userdata.items %}
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <p style="margin: 0;"><strong>DELIVERY AT: {{details.delivery}}</strong></p>
+                <p style="margin: 0; text-align: right;"><strong>CONSIGNEE COPY</strong></p>
+            </div>
+
+            <!-- General details to display only once -->
+            <table border="2" width="100%">
+                <tr>
+                    <td colspan="3" class="fixed-td services-td">
+                        <strong>DAILY SERVICE</strong><br>
+                        {{branchdetails.services}}
+                    </td>
+                    <td colspan="4" style="text-align: center;" class="fixed-td company-td">
+                        <div>
+                            <h3>{{ branchdetails.companyname }}<br></h3>
+                            <h5>{{ branchdetails.address }}<br>
+                                {{ branchdetails.phonenumber }}<br>
+                                GST NO.: {{ branchdetails.gst }}
+                            </h5>
+                        </div>
+                    </td>
+                    <td colspan="2" class="fixed-td agency-td">
+                        <strong>DELIVERY AGENCY</strong><br>
+                        {{branchdetails.agency}}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="5">LR No. {{ track_id }}</td>
+                    <td colspan="2">Date: {{ details.date|date:"d-m-Y" }}</td>
+                    <td colspan="2">Time: {{ details.time }}</td>
+                </tr>
+                <tr>
+                    <td colspan="5">From: {{ details.route_from }}</td>
+                    <td colspan="4">To: {{ details.route_to }}</td>
+                </tr>
+                <tr>
+                    <td colspan="6">
+                        <strong>Consignor:</strong> {{ details.sender_name }}<br>
+                        Address: {{ details.sender_address }}<br>
+                        Mobile No: {{ details.sender_mobile }}
+                    </td>
+                    <td colspan="3">
+                        <strong>Consignee:</strong> {{ details.receiver_name }}<br>
+                        Address: {{ details.receiver_address }}<br>
+                        Mobile: {{ details.receiver_mobile }}
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>QTY</strong></td>
+                    <td colspan="5"><strong>DESCRIPTION OF GOODS</strong></td>
+                    <td><strong>WEIGHT KG</strong></td>
+                    <td><strong>CHARGED</strong></td>
+                    <td><strong>AMOUNT</strong></td>
+                </tr>
+
+                <!-- Loop through each product individually -->
+                <tr>
+                    <td>{% for consignment in details.consignment_list %} <p>{{ consignment.pieces }} </p>{% endfor %}</td>
+                    <td colspan="5">{% for consignment in details.consignment_list %} <p>{{ consignment.desc_product }} </p>{% endfor %}</td>
+                    <td>{{ details.weight }} <hr><strong>C. WEIGHT</strong><hr>{{ details.weightAmt }}</td>
+                    <td>
+                        Freight: <br>
+                        Hamali: <br>
+                        Door Charge: <br>
+                        ST Charge:<br/>
+                        Balance:
+                    </td>
+                    <td style="text-align: right;">
+                        {{ details.freight }}<br>
+                        {{ details.hamali }}<br>
+                        {{ details.door_charge }}<br>
+                        {{ details.st_charge }}<br>
+                        {{ details.balance }}
+                    </td>
+                </tr>
+
+                <!-- Footer details displayed only once -->
+                <tr>
+                    <td colspan="5">
+                        <strong>E-WAY BILL: {{ details.eway_bill }}</strong>
+                    </td>
+                    <td colspan="2"><strong>Pay Status: {{ details.pay_status }}</strong></td>
+                    <td><strong>Total:</strong></td>
+                    <td style="text-align: right;">{{ details.total_cost }}</td>
+                </tr>
+                <tr>
+                    <td colspan="6">
+                        1. Company is not responsible for leakage, Damage & loose Goods<br>
+                        2. Goods Booked at Owner's Risk<br>
+                        3. Any complaints within 7 days.
+                    </td>
+                    <td rowspan="3" style="text-align: right;">
+                        <strong>Generated By: {{ details.name }}</strong>
+                    </td>
+                    <td rowspan="3" colspan="2" style="text-align: right;">
+                        <strong>FOR RAICHUR PARCEL SERVICES</strong>
+                    </td>
+                </tr>
+            </table>
+        {% endfor %}
+    </div>
+{% endif %}
+
+</div>
+</body>
+</html>

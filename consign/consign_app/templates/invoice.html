@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+        }
+
+        .container-xxl {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .company-info p {
+            margin: 5px 0;
+        }
+
+        .company-info h2 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            color: #333;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .btn-print, .btn-back {
+            display: block;
+            margin: 20px auto;
+            width: 150px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-xxl py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-12 col-md-8">
+                    <div class="company-info" align="center">
+                        <h2 class="display-4 text-success"><b>Rahul Transport Company</b></h2>
+                        <p>HUGAR BUILDING, BAMMAPUR ONI, HIREPEPH, HUBLI-28.</p>
+                        <p>Mobile NO: 4250134/9243242693 | GST : 29AJZPP3950C2ZM</p>
+                        <hr>
+                    </div>
+                    <table class="table">
+                        <tr>
+
+                            <th colspan="3">Bill No : {{bill}}</th>
+                            <th colspan="4">Track No : {{tid}}</th>
+                            <th colspan="4">Bill Date : {{bill_date}}</th>
+                        </tr>
+                        <tr>
+                            <td  colspan="6">From : {{route_from}}</td>
+                            <td colspan="5">To : {{route_to}}</td>
+
+
+                        </tr>
+                        <tr>
+                            <td colspan="6">Consignor : {{sname}}<br> Address :  {{saddress}} <br> Mobile : {{smobile}}</td>
+                            <td colspan="5">Consignee : {{rname}}<br> Address :  {{raddress}} <br> Mobile : {{rmobile}}</td>
+
+                        </tr>
+                         <tr>
+
+                        </tr>
+                        <tr>
+                            <th>Qty</th>
+                            <th colspan="4">Description of Goods</th>
+                            <th>Weight</th>
+                            <th colspan="4" >Charged</th>
+                            <th>Amount</th>
+                        </tr>
+
+                        <tr>
+                            <td>{{qty}}</td>
+                            <td colspan="4">{{products}}</td>
+                            <td>{{weight}}</td>
+                            <td colspan="4">Freight <br> Hamali <br> Door Charge <br> ST Charge <br><hr> <b>Total</b></td>
+                            <td> {{freight}} <br> {{hamali}} <br> {{door_charge}} <br> {{st_charge}} <br> <hr><b>{{cost}}</b></td>
+                        </tr>
+
+                    </table>
+                    <div class="text-center">
+                        <a href="javascript:window.print()" class="btn btn-danger btn-print">Print</a>
+                        <a href="{% url 'user_search_results' %}" class="btn btn-success btn-back">Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

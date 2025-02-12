@@ -1,0 +1,294 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Untree.co" />
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}" />
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap5" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="{% static 'fonts/icomoon/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'fonts/flaticon/font/flaticon.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'css/tiny-slider.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+    <title>Consignment</title>
+<style>
+        /* CSS for horizontal scrolling */
+        .table-container {
+            overflow-x: auto; /* Enable horizontal scrolling */
+            -webkit-overflow-scrolling: touch; /* For smooth scrolling on iOS */
+        }
+
+        table {
+            width: 100%; /* Ensure the table takes full width */
+            min-width: 600px; /* Adjust based on the expected minimum width */
+        }
+    </style>
+</head>
+<body>
+    <div class="site-mobile-menu site-navbar-target">
+        <div class="site-mobile-menu-header">
+            <div class="site-mobile-menu-close">
+                <span class="icofont-close js-menu-toggle"></span>
+            </div>
+        </div>
+        <div class="site-mobile-menu-body"></div>
+    </div>
+
+    {% include 'branch_nav.html' %}
+
+<br><br><br>
+
+      <div class="container">
+        <div class="row justify-content-center align-items-center">
+          <div class="col-lg-9 text-center mt-5">
+            <h1 class="heading" data-aos="fade-up">Payment History</h1>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+	<!-- end header -->
+<!-- Date Range, Driver, Consignor, and Consignee Selection -->
+<div class="container my-4">
+    <div class="row">
+        <div class="col-md-3">
+            <label for="t3">From Date:</label>
+            <input type="date" id="t3" class="form-control">
+        </div>
+        <div class="col-md-3">
+            <label for="t4">To Date:</label>
+            <input type="date" id="t4" class="form-control">
+        </div>
+
+        <div class="col-md-3">
+            <label for="senderName">Sender Name:</label>
+            <input type="text" id="senderName" name="a1" class="form-control" list="consignor_name" oninput="showConsignorDatalist()">
+            <datalist id="consignor_name"></datalist> <!-- Container for the suggestions -->
+        </div>
+        <div class="col-md-3">
+            <label for="receiverName">Receiver Name:</label>
+            <input type="text" id="receiverName" name="a5" class="form-control" list="consignee_name" oninput="showConsigneeDatalist()">
+            <datalist id="consignee_name"></datalist>
+        </div>
+        <div class="col-md-3">
+            <label for="pay_status">Pay Status</label>
+            <select id="pay_status" class="form-control">
+                <option value="all">All</option>
+                <option value="Paid">Paid</option>
+                <option value="Consigner_AC">Shipper Account</option>
+                <option value="Consignee_AC">Receiver Account</option>
+                <option value="ToPay">To Pay</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <br>
+            <button id="fetchDetails" class="btn btn-primary">Fetch Details</button>
+        </div>
+    </div>
+    <br>
+
+    <!-- Table to display fetched details -->
+    <div class="table-container">
+        <table id="detailsTable" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>SI.NO</th>
+                    <th>Track No</th>
+                    <th>Consignor</th>
+                    <th>Consignee</th>
+                    <th>Description of Product</th>
+                    <th>Qty</th>
+                    <th>Pay Status</th>
+
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be appended here by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    // Fetch consignors and consignees on page load
+    $.ajax({
+        url: '{% url "fetch_consignments" %}',
+        type: 'GET',
+        success: function(response) {
+            var consignorSelect = $('#consignor_name');
+            var consigneeSelect = $('#consignee_name');
+
+            consignorSelect.empty();
+            consigneeSelect.empty();
+
+            $.each(response.consignors, function(index, item) {
+                consignorSelect.append(`<option value="${item.sender_name}">${item.sender_name}</option>`);
+            });
+            $.each(response.consignees, function(index, item) {
+                consigneeSelect.append(`<option value="${item.receiver_name}">${item.receiver_name}</option>`);
+            });
+        },
+        error: function() {
+            alert('Error fetching consignors and consignees. Please try again.');
+        }
+    });
+
+    // Fetch details based on selection
+    $('#fetchDetails').click(function() {
+        var from_date = $('#t3').val();
+        var to_date = $('#t4').val();
+        var pay_status = $('#pay_status').val();
+        var consignor_id = $('#senderName').val();
+        var consignee_id = $('#receiverName').val();
+
+        $.ajax({
+            url: '{% url "branchfetch_details" %}',
+            type: 'GET',
+            data: {
+                'from_date': from_date,
+                'to_date': to_date,
+                'pay_status': pay_status,
+                'consignor_id': consignor_id,
+                'consignee_id': consignee_id
+            },
+            success: function(response) {
+                var tableBody = $('#detailsTable tbody');
+                tableBody.empty();
+
+                if (response.data.length > 0) {
+                    $.each(response.data, function(index, item) {
+                        var row = `<tr>
+                                    <td>${index + 1}</td>
+                                    <td>${item.track_id}</td>
+                                    <td>${item.sender_name}</td>
+                                    <td>${item.receiver_name}</td>
+                                    <td>${item.desc_product}</td>
+                                    <td>${item.pieces}</td>
+                                    <td>${item.pay_status}</td>
+                                    <td>${item.total_cost}</td>
+                                   </tr>`;
+                        tableBody.append(row);
+                    });
+                } else {
+                    tableBody.append('<tr><td colspan="8">No records found.</td></tr>');
+                }
+            },
+            error: function() {
+                alert('Error fetching details. Please try again.');
+            }
+        });
+    });
+
+    // Function to show consignor names in datalist
+    function showConsignorDatalist() {
+        const input = document.getElementById('senderName');
+        const datalist = document.getElementById('consignor_name');
+
+        if (input.value.length >= 2) {
+            fetch(`/get_consignor_name?query=${encodeURIComponent(input.value)}`)
+                .then(response => response.json())
+                .then(data => {
+                    datalist.innerHTML = ''; // Clear previous options
+
+                    if (Array.isArray(data) && data.length > 0) {
+                        data.forEach(name => {
+                            const option = document.createElement('option');
+                            option.value = name;
+                            datalist.appendChild(option);
+                        });
+                    } else {
+                        datalist.innerHTML = '<option value="No results">No results</option>';
+                    }
+                })
+                .catch(error => console.error('Error fetching consignor names:', error));
+        } else {
+            datalist.innerHTML = ''; // Clear the datalist if fewer than 2 characters
+        }
+    }
+
+    // Function to show consignee names in datalist
+    function showConsigneeDatalist() {
+        const input = document.getElementById('receiverName');
+        const datalist = document.getElementById('consignee_name');
+
+        if (input.value.length >= 2) {
+            fetch(`/get_consignee_name?query=${encodeURIComponent(input.value)}`)
+                .then(response => response.json())
+                .then(data => {
+                    datalist.innerHTML = ''; // Clear previous options
+
+                    if (Array.isArray(data) && data.length > 0) {
+                        data.forEach(name => {
+                            const option = document.createElement('option');
+                            option.value = name;
+                            datalist.appendChild(option);
+                        });
+                    } else {
+                        datalist.innerHTML = '<option value="No results">No results</option>';
+                    }
+                })
+                .catch(error => console.error('Error fetching consignee names:', error));
+        } else {
+            datalist.innerHTML = ''; // Clear the datalist if fewer than 2 characters
+        }
+    }
+
+    // Function to set the default date to the current date
+    function setCurrentDate() {
+        var today = new Date();
+        var day = today.getDate();
+        var month = today.getMonth() + 1; // Months are zero-based
+        var year = today.getFullYear();
+
+        // Format date as YYYY-MM-DD
+        var formattedDate = year + '-' + (month < 10 ? '0' + month : month) + '-' + (day < 10 ? '0' + day : day);
+
+        // Set the value of the date input
+        document.getElementById('t3').value = formattedDate;
+        document.getElementById('t4').value = formattedDate;
+    }
+
+    // Run the function when the page loads
+    window.onload = setCurrentDate;
+});
+</script>
+
+<div class="no-print">
+        <div class="row mt-5">
+            <div class="col-12 text-center">
+
+            </div>
+        </div>
+        <div id="overlayer"></div>
+        <div class="loader">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static 'js/tiny-slider.js' %}"></script>
+        <script src="{% static 'js/aos.js' %}"></script>
+        <script src="{% static 'js/navbar.js' %}"></script>
+        <script src="{% static 'js/counter.js' %}"></script>
+        <script src="{% static 'js/custom.js' %}"></script>
+    </div>
+</body>
+</html>

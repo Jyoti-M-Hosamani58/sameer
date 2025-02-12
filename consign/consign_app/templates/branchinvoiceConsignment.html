@@ -1,0 +1,579 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Print Consignment</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Include html2canvas and jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <style>
+        @media print {
+            .btn-print, .btn-download, .btn-back {
+                display: none; /* Hide print/download buttons during printing */
+            }
+            @media print {
+    body {
+        margin: 0;
+        padding: 0;
+        -webkit-print-color-adjust: exact; /* For Safari */
+    }
+
+
+    .print-container {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        height: 100vh; /* Fill the height of the page */
+        padding: 0 20mm; /* Left and right margin */
+        box-sizing: border-box; /* Include padding in width/height */
+    }
+
+    .copy {
+        width: calc(50% - 10mm); /* Half width minus margin */
+        height: 100%; /* Full height */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Optional: add some shadow for separation */
+    }
+    #lorry-content, #invoice-content, #consignor-content{
+        width:100%;
+        margin: 0; /* Reset margins here */
+        padding: 20px 0 700px 0;
+        /* padding: top right bottom left */
+        border: 1px solid transparent; /* Prevent margin collapse */
+        font-size:16px;
+        font-weight:bold;
+}
+}
+
+
+            @page {
+                size: A4;
+            margin: 20px 500px 500x;
+            }
+
+            body {
+                font-size: 16px; /* Smaller font size */
+            }
+
+            table {
+                border-collapse: collapse;
+                font-size: 16px; /* Smaller font size for tables */
+                table-layout: fixed;
+                word-wrap: break-word;
+                padding: 10px;
+            }
+
+            td, th {
+                border: 1px solid black;
+                padding: 0px; /* Reduce padding for compact layout */
+            }
+        }
+
+        .container {
+            page-break-inside: avoid; /* Prevent page breaks inside containers */
+        }
+
+        .invoice-header {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        tr{
+        padding: 10px;
+        }
+
+
+        .table th, .table td {
+                text-align: left;
+            vertical-align: top;
+        }
+        .flex-container {
+    display: flex;
+    align-items: flex-start; /* Align items at the start of the container (top) */
+    justify-content: flex-start; /* Align items to the start of the container (left) */
+}
+.fixed-td {
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.services-td {
+    width: 50px;  /* Set width for the services-td */
+}
+
+.agency-td {
+    width: 50px;  /* Set width for the agency-td */
+}
+
+.company-td {
+    width: 70px; /* Allow the company-td to take the remaining space */
+    flex-grow: 1; /* Allow it to grow as needed */
+    text-align: center;
+}
+
+.flex-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Ensure image is on the left and content on the right */
+    gap: 10px; /* Add space between the image and content */
+}
+
+
+.company-content {
+    flex-grow: 1; /* Ensure content takes up remaining space */
+    text-align: left; /* Align content to the left within the company-content div */
+}
+
+    </style>
+    <style>
+        /* CSS for adding padding and ensuring proper styling */
+        table.fixed-td {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .fixed-td td {
+            padding: 5px; /* 10px padding to all table cells */
+            border: 2px solid black; /* Retaining the border as per original */
+            font-size:16px;
+        }
+
+        .services-td, .agency-td, .company-td {
+            text-align: center;
+            vertical-align: top;
+        }
+
+        td p {
+            margin: 0; /* Removing margin from p tags inside table cells */
+        }
+                         img{
+                              width:150px;
+                              height:150px;
+                         }
+    </style>
+
+
+</head>
+<body>
+<script>
+    async function downloadPDF() {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'pt', 'a4');
+
+        const allInvoiceContent = document.getElementById('all-invoice-content'); // Updated ID
+
+        await html2canvas(allInvoiceContent, {
+            scale: 2
+        }).then(canvas => {
+            const imgData = canvas.toDataURL('image/png');
+            const imgWidth = pdf.internal.pageSize.getWidth();
+            const imgHeight = canvas.height * imgWidth / canvas.width;
+            pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+            pdf.save('invoice.pdf');
+        }).catch(error => {
+            console.error('Error generating PDF:', error);
+        });
+    }
+
+
+</script>
+
+
+<a href="javascript:window.print()" class="btn btn-danger btn-print">Print</a>
+<a href="{% url 'branchviewconsignment' %}" class="btn btn-back"
+   style="background-color: salmon; color: white;">Back</a>
+
+<button class="btn-download btn btn-primary" onclick="downloadPDF()">Download PDF</button>
+<div id="all-invoice-content">
+
+    {% if 'Consignor Copy' in copy_types %}
+    <div class=" invoice" id="invoice-content">
+        {% for track_id, details in grouped_userdata.items %}
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <p style="margin: 0;"><strong>DELIVERY AT: {{details.delivery}}</strong></p>
+            <p style="margin: 0; text-align: right;"><strong>CONSIGNOR COPY</strong></p>
+        </div>
+
+
+        <!-- General details to display only once -->
+        <table border="2" width="100%" class="fixed-td watermark-table">
+            <tr class="watermark-content">
+
+                <td colspan="10" class="company-td">
+                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                        <!-- Left Side: Company Name and Address -->
+                        <div>
+                            <p>Subject to Hubballi Jurisdiction</p>
+                            <h1>Sameer Roadlines</h1>
+                            <h4><strong>HO.: KSCMF Godown, Karwar Road, Vikas Nagar Hubli, Hubli - 580021</strong></h4>
+                            <h6>Phone.No: 07947415712 &nbsp;&nbsp;&nbsp;&nbsp; GSTIN: 29AMAPP0821C1ZI</h6>
+                        </div>
+
+                        <!-- Right Side: Branch Details -->
+                        <div style="text-align: right;">
+                            <strong>Branch:</strong>
+                            <p>{{ branchdetails.companyname }}<br></p>
+                            <h5>{{ branchdetails.address }}<br>
+                                {{ branchdetails.phonenumber }}<br>
+                            </h5>
+                        </div>
+                    </div>
+                </td>
+
+
+            </tr>
+            <tr class="watermark-content">
+                <td colspan="5">LR No. {{ track_id }}</td>
+                <td colspan="2">Date: {{ details.date|date:"d-m-Y" }}</td>
+                <td colspan="3">Time: {{ details.time }}</td>
+            </tr>
+            <tr class="watermark-content">
+                <td colspan="5">From: {{ details.route_from }}</td>
+                <td colspan="5">To: {{ details.route_to }}</td>
+            </tr>
+            <tr class="watermark-content">
+                <td colspan="6">
+                    <strong>Consignor:</strong> {{ details.sender_name }}<br>
+                    Address: {{ details.sender_address }}<br>
+                    Mobile No: {{ details.sender_mobile }}
+                </td>
+                <td colspan="4">
+                    <strong>Consignee:</strong> {{ details.receiver_name }}<br>
+                    Address: {{ details.receiver_address }}<br>
+                    Mobile: {{ details.receiver_mobile }}
+                </td>
+            </tr>
+            <tr class="watermark-content">
+                <td><strong>QTY</strong></td>
+                <td colspan="5"><strong>DESCRIPTION OF GOODS</strong></td>
+                <td><strong>WEIGHT KG</strong></td>
+                <td><strong>CHARGED WEIGHT</strong></td>
+                <td><strong>CHARGED</strong></td>
+                <td><strong>AMOUNT</strong></td>
+            </tr>
+
+            <tr class="watermark-content">
+                <td style="text-align: center; font-weight:bold;">{% for consignment in details.consignment_list %} <p>
+                    {{ consignment.pieces }} </p>{% endfor %}
+                </td>
+                <td colspan="5" style="font-weight:bold;">{% for consignment in details.consignment_list %} <p>{{
+                    consignment.desc_product }} </p>{% endfor %}
+                </td>
+                <td>{{ details.weight }}
+                    <hr>
+                    <strong>INVOICE NO</strong>
+                    <hr>
+                    {{ details.prod_invoice }}
+                </td>
+                <td> {{ details.weightAmt }}
+                    <hr>
+                    <strong>INVOICE VALUE</strong>
+                    <hr>
+                    {{ details.prod_price }}
+                </td>
+                <td>
+                    Freight: <br>
+                    Hamali: <br>
+                    D. Charge: <br>
+                    ST Charge:<br/>
+                    Balance:
+                </td>
+                <td style="text-align: right;">
+                    {{ details.freight }}<br>
+                    {{ details.hamali }}<br>
+                    {{ details.door_charge }}<br>
+                    {{ details.st_charge }}<br>
+                    {{ details.balance }}
+                </td>
+            </tr>
+
+            <!-- Footer details displayed only once -->
+            <tr class="watermark-content">
+                <td><strong>TOTAL: {{ totalqty }}</strong></td>
+                <td colspan="4">
+                    <strong>E-WAY BILL: {{ details.eway_bill }}</strong>
+                </td>
+                <td colspan="3"><strong>Pay Status: {{ details.pay_status }}</strong></td>
+                <td><strong>Total:</strong></td>
+                <td style="text-align: right;">{{ details.total_cost }}</td>
+            </tr>
+            <tr class="watermark-content">
+                <td colspan="5">
+                    1. Company is not responsible for leakage, Damage & loose Goods<br>
+                    2. Goods Booked at Owner's Risk<br>
+                    3. Any complaints within 7 days.
+                </td>
+                <td rowspan="3" colspan="2" style="text-align: right;">
+                    <strong>Generated By: {{ details.name }}</strong>
+                </td>
+                <td rowspan="3" colspan="3" style="text-align: right;">
+                    <strong>FOR SAMEER ROADALINES</strong>
+                </td>
+            </tr>
+        </table>
+
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if 'Lorry Copy' in copy_types %}
+    <div class=" invoice" id="lorry-content">
+        {% for track_id, details in grouped_userdata.items %}
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <p style="margin: 0;"><strong>DELIVERY AT: {{details.delivery}}</strong></p>
+            <p style="margin: 0; text-align: right;"><strong>LORRY COPY</strong></p>
+        </div>
+
+        <!-- General details to display only once -->
+        <table border="2" width="100%" class="fixed-td watermark-table">
+            <tr class="watermark-content">
+
+                <td colspan="10" class="company-td">
+                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                        <!-- Left Side: Company Name and Address -->
+                        <div>
+                            <p>Subject to Hubballi Jurisdiction</p>
+                            <h1>Sameer Roadlines</h1>
+                            <h4><strong>HO.: KSCMF Godown, Karwar Road, Vikas Nagar Hubli, Hubli - 580021</strong></h4>
+                            <h6>Phone.No: 07947415712 &nbsp;&nbsp;&nbsp;&nbsp; GSTIN: 29AMAPP0821C1ZI</h6>
+                        </div>
+
+                        <!-- Right Side: Branch Details -->
+                        <div style="text-align: right;">
+                            <strong>Branch:</strong>
+                            <p>{{ branchdetails.companyname }}<br></p>
+                            <h5>{{ branchdetails.address }}<br>
+                                {{ branchdetails.phonenumber }}<br>
+                            </h5>
+                        </div>
+                    </div>
+                </td>
+
+            </tr>
+            <tr class="watermark-content">
+                <td colspan="5">LR No. {{ track_id }}</td>
+                <td colspan="2">Date: {{ details.date|date:"d-m-Y" }}</td>
+                <td colspan="3">Time: {{ details.time }}</td>
+            </tr>
+            <tr class="watermark-content">
+                <td colspan="5">From: {{ details.route_from }}</td>
+                <td colspan="5">To: {{ details.route_to }}</td>
+            </tr>
+            <tr class="watermark-content">
+                <td colspan="6">
+                    <strong>Consignor:</strong> {{ details.sender_name }}<br>
+                    Address: {{ details.sender_address }}<br>
+                    Mobile No: {{ details.sender_mobile }}
+                </td>
+                <td colspan="4">
+                    <strong>Consignee:</strong> {{ details.receiver_name }}<br>
+                    Address: {{ details.receiver_address }}<br>
+                    Mobile: {{ details.receiver_mobile }}
+                </td>
+            </tr>
+            <tr class="watermark-content">
+                <td><strong>QTY</strong></td>
+                <td colspan="5"><strong>DESCRIPTION OF GOODS</strong></td>
+                <td><strong>WEIGHT KG</strong></td>
+                <td><strong>CHARGED WEIGHT</strong></td>
+                <td><strong>CHARGED</strong></td>
+                <td><strong>AMOUNT</strong></td>
+            </tr>
+
+            <tr class="watermark-content">
+                <td style="text-align: center; font-weight:bold;">{% for consignment in details.consignment_list %} <p>
+                    {{ consignment.pieces }} </p>{% endfor %}
+                </td>
+                <td colspan="5" style="font-weight:bold;">{% for consignment in details.consignment_list %} <p>{{
+                    consignment.desc_product }} </p>{% endfor %}
+                </td>
+                <td>{{ details.weight }}
+                    <hr>
+                    <strong>INVOICE NO</strong>
+                    <hr>
+                    {{ details.prod_invoice }}
+                </td>
+                <td> {{ details.weightAmt }}
+                    <hr>
+                    <strong>INVOICE VALUE</strong>
+                    <hr>
+                    {{ details.prod_price }}
+                </td>
+                <td>
+                    Freight: <br>
+                    Hamali: <br>
+                    D. Charge: <br>
+                    ST Charge:<br/>
+                    Balance:
+                </td>
+                <td style="text-align: right;">
+                    {{ details.freight }}<br>
+                    {{ details.hamali }}<br>
+                    {{ details.door_charge }}<br>
+                    {{ details.st_charge }}<br>
+                    {{ details.balance }}
+                </td>
+            </tr>
+
+            <!-- Footer details displayed only once -->
+            <tr class="watermark-content">
+                <td><strong>TOTAL: {{ totalqty }}</strong></td>
+                <td colspan="4">
+                    <strong>E-WAY BILL: {{ details.eway_bill }}</strong>
+                </td>
+                <td colspan="3"><strong>Pay Status: {{ details.pay_status }}</strong></td>
+                <td><strong>Total:</strong></td>
+                <td style="text-align: right;">{{ details.total_cost }}</td>
+            </tr>
+            <tr class="watermark-content">
+                <td colspan="5">
+                    1. Company is not responsible for leakage, Damage & loose Goods<br>
+                    2. Goods Booked at Owner's Risk<br>
+                    3. Any complaints within 7 days.
+                </td>
+                <td rowspan="3" colspan="2" style="text-align: right;">
+                    <strong>Generated By: {{ details.name }}</strong>
+                </td>
+                <td rowspan="3" colspan="3" style="text-align: right;">
+                    <strong>FOR SAMEER ROADALINES</strong>
+                </td>
+            </tr>
+        </table>
+
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if 'Consignee Copy' in copy_types %}
+    <div class=" invoice" id="consignor-content">
+        {% for track_id, details in grouped_userdata.items %}
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <p style="margin: 0;"><strong>DELIVERY AT: {{details.delivery}}</strong></p>
+            <p style="margin: 0; text-align: right;"><strong>CONSIGNEE COPY</strong></p>
+        </div>
+
+        <!-- General details to display only once -->
+        <table border="2" width="100%" class="fixed-td watermark-table">
+            <tr class="watermark-content">
+
+                <td colspan="10" class="company-td">
+                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                        <!-- Left Side: Company Name and Address -->
+                        <div>
+                            <p>Subject to Hubballi Jurisdiction</p>
+                            <h1>Sameer Roadlines</h1>
+                            <h4><strong>HO.: KSCMF Godown, Karwar Road, Vikas Nagar Hubli, Hubli - 580021</strong></h4>
+                            <h6>Phone.No: 07947415712 &nbsp;&nbsp;&nbsp;&nbsp; GSTIN: 29AMAPP0821C1ZI</h6>
+                        </div>
+
+                        <!-- Right Side: Branch Details -->
+                        <div style="text-align: right;">
+                            <strong>Branch:</strong>
+                            <p>{{ branchdetails.companyname }}<br></p>
+                            <h5>{{ branchdetails.address }}<br>
+                                {{ branchdetails.phonenumber }}<br>
+                            </h5>
+                        </div>
+                    </div>
+                </td>
+
+            </tr>
+            <tr class="watermark-content">
+                <td colspan="5">LR No. {{ track_id }}</td>
+                <td colspan="2">Date: {{ details.date|date:"d-m-Y" }}</td>
+                <td colspan="3">Time: {{ details.time }}</td>
+            </tr>
+            <tr class="watermark-content">
+                <td colspan="5">From: {{ details.route_from }}</td>
+                <td colspan="5">To: {{ details.route_to }}</td>
+            </tr>
+            <tr class="watermark-content">
+                <td colspan="6">
+                    <strong>Consignor:</strong> {{ details.sender_name }}<br>
+                    Address: {{ details.sender_address }}<br>
+                    Mobile No: {{ details.sender_mobile }}
+                </td>
+                <td colspan="4">
+                    <strong>Consignee:</strong> {{ details.receiver_name }}<br>
+                    Address: {{ details.receiver_address }}<br>
+                    Mobile: {{ details.receiver_mobile }}
+                </td>
+            </tr>
+            <tr class="watermark-content">
+                <td><strong>QTY</strong></td>
+                <td colspan="5"><strong>DESCRIPTION OF GOODS</strong></td>
+                <td><strong>WEIGHT KG</strong></td>
+                <td><strong>CHARGED WEIGHT</strong></td>
+                <td><strong>CHARGED</strong></td>
+                <td><strong>AMOUNT</strong></td>
+            </tr>
+
+            <tr class="watermark-content">
+                <td style="text-align: center; font-weight:bold;">{% for consignment in details.consignment_list %} <p>
+                    {{ consignment.pieces }} </p>{% endfor %}
+                </td>
+                <td colspan="5" style="font-weight:bold;">{% for consignment in details.consignment_list %} <p>{{
+                    consignment.desc_product }} </p>{% endfor %}
+                </td>
+                <td>{{ details.weight }}
+                    <hr>
+                    <strong>INVOICE NO</strong>
+                    <hr>
+                    {{ details.prod_invoice }}
+                </td>
+                <td> {{ details.weightAmt }}
+                    <hr>
+                    <strong>INVOICE VALUE</strong>
+                    <hr>
+                    {{ details.prod_price }}
+                </td>
+                <td>
+                    Freight: <br>
+                    Hamali: <br>
+                    D. Charge: <br>
+                    ST Charge:<br/>
+                    Balance:
+                </td>
+                <td style="text-align: right;">
+                    {{ details.freight }}<br>
+                    {{ details.hamali }}<br>
+                    {{ details.door_charge }}<br>
+                    {{ details.st_charge }}<br>
+                    {{ details.balance }}
+                </td>
+            </tr>
+
+            <!-- Footer details displayed only once -->
+            <tr class="watermark-content">
+                <td><strong>TOTAL: {{ totalqty }}</strong></td>
+                <td colspan="4">
+                    <strong>E-WAY BILL: {{ details.eway_bill }}</strong>
+                </td>
+                <td colspan="3"><strong>Pay Status: {{ details.pay_status }}</strong></td>
+                <td><strong>Total:</strong></td>
+                <td style="text-align: right;">{{ details.total_cost }}</td>
+            </tr>
+            <tr class="watermark-content">
+                <td colspan="5">
+                    1. Company is not responsible for leakage, Damage & loose Goods<br>
+                    2. Goods Booked at Owner's Risk<br>
+                    3. Any complaints within 7 days.
+                </td>
+                <td rowspan="3" colspan="2" style="text-align: right;">
+                    <strong>Generated By: {{ details.name }}</strong>
+                </td>
+                <td rowspan="3" colspan="3" style="text-align: right;">
+                    <strong>FOR SAMEER ROADALINES</strong>
+                </td>
+            </tr>
+        </table>
+
+        {% endfor %}
+    </div>
+    {% endif %}
+
+</div>
+</body>
+</html>

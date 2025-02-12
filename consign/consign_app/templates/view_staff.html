@@ -1,0 +1,176 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Untree.co" />
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}" />
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap5" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="{% static 'fonts/icomoon/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'fonts/flaticon/font/flaticon.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'css/tiny-slider.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+    <title>
+      Consignment
+    </title>
+  </head>
+  <body>
+    <div class="site-mobile-menu site-navbar-target">
+      <div class="site-mobile-menu-header">
+        <div class="site-mobile-menu-close">
+          <span class="icofont-close js-menu-toggle"></span>
+        </div>
+      </div>
+      <div class="site-mobile-menu-body"></div>
+    </div>
+
+    {% include 'branch_nav.html' %}
+<br><br><br>
+
+      <div class="container">
+        <div class="row justify-content-center align-items-center">
+          <div class="col-lg-9 text-center mt-5">
+            <h1 class="heading" data-aos="fade-up"> Staff List</h1>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+	<!-- end header -->
+<div class="background-container"></div>
+<div class="content">
+    <div class="" style=" overflow-x: auto;">
+        <form method="post">
+            {% csrf_token %}
+        <div class="row">
+            <div class="col-md-3">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" class="form-control" required list="staff_name" oninput="showStaffDatalist()">
+                <datalist id="staff_name"></datalist>
+            </div>
+            <div class="col-md-3">
+                <br>
+                <button type="submit" class="form-control btn-primary">Search</button>
+            </div>
+        </div>
+            </form>
+        <br>
+        <div class="">
+            <div class="">
+                <form method="get">
+                    <table class="table table-striped table-bordered">
+
+                        <thead class="table-dark">
+                        <tr>
+                            <th>Name</th>
+                            <th>Branch</th>
+                            <th>Phone no.</th>
+                            <th>Staff Id</th>
+                            <th colspan="2">Action</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        {% for d in data %}
+                        <tr class="custom-row">
+                            <td>{{d.staffname}}</td>
+                            <td>{{ d.Branch}}</td>
+                            <td>{{ d.staffPhone }}</td>
+                            <td>{{ d.staffid}}</td>
+
+
+                            <td class="action-btns">
+                                <a href="{% url 'edit_staff' d.id %}" class="btn btn-info btn-lg">Edit</a>
+                            </td>
+                            <td>
+                                 <a href="{% url 'delete_staff' d.id %}" class="btn btn-danger btn-lg">Delete</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+    <script>
+function showStaffDatalist() {
+    const input = document.getElementById('name');
+    const datalist = document.getElementById('staff_name');
+
+    if (input.value.length >= 2) {
+        fetch(`/get_staff?query=${encodeURIComponent(input.value)}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Fetched data:', data); // Debugging: Check the data in the console
+                datalist.innerHTML = ''; // Clear previous options
+
+                if (Array.isArray(data) && data.length > 0) {
+                    data.forEach(number => {
+                        const option = document.createElement('option');
+                        option.value = number;
+                        datalist.appendChild(option);
+                    });
+                } else {
+                    const option = document.createElement('option');
+                    option.value = 'No results';
+                    datalist.appendChild(option);
+                }
+            })
+            .catch(error => console.error('Error fetching vehicle numbers:', error));
+    } else {
+        datalist.innerHTML = ''; // Clear the datalist if fewer than 2 characters
+    }
+}
+
+    </script>
+
+<div class="row mt-5">
+          <div class="col-12 text-center">
+            <!--
+              **==========
+              NOTE:
+              Please don't remove this copyright link unless you buy the license here https://untree.co/license/
+              **==========
+            -->
+
+          </div>
+        </div>
+      </div>
+      <!-- /.container -->
+    </div>
+    <!-- /.site-footer -->
+
+    <!-- Preloader -->
+    <div id="overlayer"></div>
+    <div class="loader">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/tiny-slider.js' %}"></script>
+    <script src="{% static 'js/aos.js' %}"></script>
+    <script src="{% static 'js/navbar.js' %}"></script>
+    <script src="{% static 'js/counter.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+  </body>
+</html>
+

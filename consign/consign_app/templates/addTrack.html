@@ -1,0 +1,190 @@
+{% load static %}}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Untree.co" />
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}" />
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap5" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="{% static 'fonts/icomoon/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'fonts/flaticon/font/flaticon.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'css/tiny-slider.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+    <title>
+      Property &mdash; Free Bootstrap 5 Website Template by Untree.co
+    </title>
+  </head>
+  <body>
+    <div class="site-mobile-menu site-navbar-target">
+      <div class="site-mobile-menu-header">
+        <div class="site-mobile-menu-close">
+          <span class="icofont-close js-menu-toggle"></span>
+        </div>
+      </div>
+      <div class="site-mobile-menu-body"></div>
+    </div>
+
+    {% include 'index_menu.html' %}
+
+    <div
+      class="hero page-inner overlay"
+      style="background-image: url('{% static 'images/hero_bg_1.jpg' %}')"
+    >
+      <div class="container">
+        <div class="row justify-content-center align-items-center">
+          <div class="col-lg-9 text-center mt-5">
+            <h1 class="heading" data-aos="fade-up">View Consignment</h1>
+
+            <nav
+              aria-label="breadcrumb"
+              data-aos="fade-up"
+              data-aos-delay="200"
+            >
+              <ol class="breadcrumb text-center justify-content-center">
+                <li class="breadcrumb-item"><a href="{% url 'index' %}}">Home</a></li>
+                <li
+                  class="breadcrumb-item active text-white-50"
+                  aria-current="page"
+                >
+                  ViewAddConsignment
+                </li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+
+	<!-- end header -->
+
+<div class="container">
+    <h1 class="text-center my-4">Add Tracker</h1>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="a1">Tracking Number:</label>
+                    <input type="text" class="form-control" id="a1" name="a1" required>
+                </div>
+                <div class="form-group">
+                    <label for="status">Status:</label>
+                    <select class="form-control" id="status" name="status" required>
+                        <option value="In Transit">In Transit</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group" id="custom_status_input" style="display: none;">
+                    <label for="a2">Custom Status:</label>
+                    <input type="text" class="form-control" id="a2" name="a2">
+                </div><br>
+                <button type="submit" class="btn btn-primary w-100">Add Track</button>
+            </form>
+        </div>
+    </div>
+    <div class="row justify-content-center my-4">
+        <div class="col-md-8">
+            <div class="recent-consignments">
+                <h2>Recent Consignments</h2>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Tracking Number</th>
+                            <th>Sender</th>
+                            <th>Receiver</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for consignment in consignments %}
+                        <tr>
+                            <td>{{ consignment.track_id }}</td>
+                            <td>{{ consignment.sender_name }}</td>
+                            <td>{{ consignment.receiver_name }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3">No recent consignments available.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<div class="row mt-5">
+          <div class="col-12 text-center">
+            <!--
+              **==========
+              NOTE:
+              Please don't remove this copyright link unless you buy the license here https://untree.co/license/
+              **==========
+            -->
+
+            <p>
+              Copyright &copy;
+              <script>
+                document.write(new Date().getFullYear());
+              </script>
+              . All Rights Reserved. <br>&mdash; Designed and Developed  By -
+              <a href="https://flowercreeper.com/index.php">FlowerCreeper</a>
+              <!-- License information: https://untree.co/license/ -->
+            </p>
+
+          </div>
+        </div>
+      </div>
+      <!-- /.container -->
+    </div>
+    <!-- /.site-footer -->
+
+    <!-- Preloader -->
+    <div id="overlayer"></div>
+    <div class="loader">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/tiny-slider.js' %}"></script>
+    <script src="{% static 'js/aos.js' %}"></script>
+    <script src="{% static 'js/navbar.js' %}"></script>
+    <script src="{% static 'js/counter.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+
+<script>
+    // Script to show/hide custom status input based on selected status
+    $(document).ready(function() {
+        $('#status').on('change', function () {
+            if (this.value === 'Other') {
+                $('#custom_status_input').show();
+            } else {
+                $('#custom_status_input').hide();
+            }
+        });
+    });
+</script>
+</body>
+</html>

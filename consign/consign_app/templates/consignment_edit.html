@@ -1,0 +1,290 @@
+{% load static %}}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Untree.co" />
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}" />
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap5" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="{% static 'fonts/icomoon/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'fonts/flaticon/font/flaticon.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'css/tiny-slider.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+    <title>
+      Consignment
+    </title>
+  </head>
+  <body>
+    <div class="site-mobile-menu site-navbar-target">
+      <div class="site-mobile-menu-header">
+        <div class="site-mobile-menu-close">
+          <span class="icofont-close js-menu-toggle"></span>
+        </div>
+      </div>
+      <div class="site-mobile-menu-body"></div>
+    </div>
+
+    {% include 'index_menu.html' %}
+
+    <div
+      class="hero page-inner overlay"
+      style="background-image: url('{% static 'images/hero_bg_1.jpg' %}')"
+    >
+      <div class="container">
+        <div class="row justify-content-center align-items-center">
+          <div class="col-lg-9 text-center mt-5">
+            <h1 class="heading" data-aos="fade-up">Consdignment Edit </h1>
+
+            <nav
+              aria-label="breadcrumb"
+              data-aos="fade-up"
+              data-aos-delay="200"
+            >
+              <ol class="breadcrumb text-center justify-content-center">
+                <li class="breadcrumb-item"><a href="{% url 'index' %}}">Home</a></li>
+                <li
+                  class="breadcrumb-item active text-white-50"
+                  aria-current="page"
+                >
+                  ConsignmentEdit
+                </li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+	<!-- end header -->
+<div class="background-container"></div>
+    <div class="content">
+    <div id="consignmentForm" class="container">
+        <h2 style="font-family: cursive;">Edit Consignment</h2>
+        <form method="post">
+
+            {% csrf_token %}
+    		<p style="color:red;text-align:center;font-size:22px;font-weight:bold">{{msg}}</p>
+			<div class="row">
+            <div class="col-md-6">
+                    <h3>Sender Details:</h3><br>
+                    <label for="senderName">Sender Name:</label>
+                    <input type="text" id="senderName" name="a1" value="{{userdata.sender_name}}" class="form-control" required>
+
+
+                    <label for="senderMobile">Sender Mobile:</label>
+                    <input type="tel" id="senderMobile" name="a2" value="{{userdata.sender_mobile}}" class="form-control" required>
+
+					<label for="sendergst">Sender GST:</label>
+                    <input type="text" id="sendergst" name="sendergst" value="{{userdata.sender_gst}}" class="form-control" required>
+
+                    <label for="senderEmail">Sender Email:</label>
+                    <input type="email" id="senderEmail" name="a3" value="{{userdata.sender_email}}" class="form-control" required>
+
+                    <label for="senderAddress">Sender Address:</label>
+                    <textarea id="senderAddress" name="a4" value="{{userdata.sender_address}}" class="form-control" required></textarea>
+
+					<label for="sen_company">Sender Company Name:</label>
+                    <textarea id="sen_company" name="sen_company" value="{{userdata.sender_company}}" class="form-control" required></textarea>
+                </div>
+                <div class="col-md-6">
+                    <h3>Receiver Details:</h3><br>
+                    <label for="receiverName">Receiver Name:</label>
+                    <input type="text" id="receiverName" name="a5" value="{{userdata.receiver_name}}" class="form-control" required>
+
+                    <label for="receiverMobile">Receiver Mobile:</label>
+                    <input type="tel" id="receiverMobile" name="a6" value="{{userdata.receiver_mobile}}" class="form-control" pattern="{0-9}"required>
+
+                     <label for="receiverEmail">Receiver Email:</label>
+                    <input type="email" id="receiverEmail" name="a7" value="{{userdata.receiver_email}}" class="form-control" required>
+
+                    <label for="receiverAddress">Receiver Address:</label>
+                    <textarea id="receiverAddress" name="a8" class="form-control" value="{{userdata.receiver_address}}" required></textarea>
+
+					<label for="receiverCompany">Receiver Company:</label>
+                    <textarea id="receiverCompany" name="receiverCompany" value="{{userdata.receiver_company}}" class="form-control" required></textarea> <br>
+               </div>
+				</div>
+				<br>
+			<div class="row">
+				<div class="col-md-6">
+                    <h3>Products Details:</h3><br>
+                    <label for="productName">Product Name:</label>
+                    <input type="text" id="productName" name="product" value="{{userdata.desc_product}}" class="form-control" required>
+
+
+                    <label for="pieces">No of Pieces</label>
+                    <input type="text" id="pieces" name="pieces" value="{{userdata.pieces}}" class="form-control" required>
+
+					<label>Volume Dimensions</label>
+    				<input type="text" name="volume_dimension" value="{{userdata.dimension}}" class="form-control" required>
+
+					<label>Product GST</label>
+    <input type="text" name="prod_gst" value="{{userdata.prod_gst}}" class="form-control">
+
+    <label>Product Invoice</label>
+    <input type="text" name="prod_invoice" value="{{userdata.prod_invoice}}" class="form-control">
+
+    <label>Product Price</label>
+    <input type="text" name="prod_price" value="{{userdata.prod_price}}" class="form-control">
+
+					<label>Method of Packing</label>
+    <input type="text" name="pack" value="{{userdata.packing}}" class="form-control">
+
+    <label>Actual Weight</label>
+    <input type="text" name="aweight" value="{{userdata.actual_weight}}" class="form-control">
+
+                </div>
+
+				<div class="col-md-6">
+                    <h3>Charge Details:</h3><br>
+
+					 <label>Quantity</label>
+    				<input type="text" name="qty" value="{{userdata.qty}}" class="form-control">
+
+					 <label>Charged Weight</label>
+    				<input type="text" name="weight" value="{{userdata.weight}}" class="form-control">
+
+					<label for="gst">GST</label>
+                    <input type="text" id="gst" name="gst" value="{{userdata.gst}}"  class="form-control" required>
+
+					<label for="cgst">CGST</label>
+                    <input type="text" id="cgst" name="cgst" value="{{userdata.cgst}}" readonly class="form-control" required>
+
+					<label for="sgst">SGST</label>
+                    <input type="text" id="sgst" name="sgst" value="{{userdata.sgst}}" readonly class="form-control" required>
+
+                    <label for="freight">Freight</label>
+                    <input type="text" id="freight" name="freight" value="{{userdata.freight}}" class="form-control" required>
+
+
+                    <label for="hamali">Hamali Charge</label>
+                    <input type="text" id="hamali" name="hamali" value="0" value="{{userdata.hamali}}" class="form-control" required>
+
+                    <label for="door_charge">Door Charge</label>
+                    <input id="door_charge" name="door_charge" value="0" value="{{userdata.door_charge}}" class="form-control" required/>
+
+					<label for="st_charge">ST Charge</label>
+                    <input id="st_charge" name="st_charge" value="0" value="{{userdata.st_charge}}"class="form-control" required/>
+
+					<label for="total">Total</label>
+					<input id="total" name="cost" class="form-control" value="{{userdata.total}}" required/><br>
+                </div>
+</div>
+			<div class="col-md-6">
+                    <h3>Route Details</h3><br>
+
+                    <label for="from">From</label>
+                    <input type="text" id="from" name="from" value="{{userdata.route_from}}" class="form-control" required>
+
+
+                    <label for="to">To</label>
+                    <input type="text" id="to" name="to" value="{{userdata.route_to}}" class="form-control" required><br>
+
+                </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+
+        </form>
+    </div>
+	</div>
+		<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const gstField = document.getElementById('gst');
+    const cgstField = document.getElementById('cgst');
+    const sgstField = document.getElementById('sgst');
+    const qtyField = document.querySelector('[name="qty"]');
+    const weightField = document.querySelector('[name="weight"]');
+    const freightField = document.querySelector('[name="freight"]');
+    const hamaliField = document.querySelector('[name="hamali"]');
+    const doorChargeField = document.querySelector('[name="door_charge"]');
+    const stChargeField = document.querySelector('[name="st_charge"]');
+    const totalField = document.getElementById('total');
+
+    function calculateTotal() {
+        const qty = parseFloat(qtyField.value) || 0;
+        const weight = parseFloat(weightField.value) || 0;
+        const gst = parseFloat(gstField.value) || 0;
+        const freight = parseFloat(freightField.value) || 0;
+        const hamali = parseFloat(hamaliField.value) || 0;
+        const doorCharge = parseFloat(doorChargeField.value) || 0;
+        const stCharge = parseFloat(stChargeField.value) || 0;
+
+        const total = qty + weight + gst + freight + hamali + doorCharge + stCharge;
+        totalField.value = total.toFixed(2);  // Format to 2 decimal places
+    }
+
+    gstField.addEventListener('input', function() {
+        const gstValue = parseFloat(gstField.value) || 0;
+        const halfGst = gstValue / 2;
+        cgstField.value = halfGst.toFixed(2);  // Format to 2 decimal places
+        sgstField.value = halfGst.toFixed(2);  // Format to 2 decimal places
+        calculateTotal();
+    });
+
+    qtyField.addEventListener('input', calculateTotal);
+    weightField.addEventListener('input', calculateTotal);
+    freightField.addEventListener('input', calculateTotal);
+    hamaliField.addEventListener('input', calculateTotal);
+    doorChargeField.addEventListener('input', calculateTotal);
+    stChargeField.addEventListener('input', calculateTotal);
+});
+</script>
+
+
+<div class="row mt-5">
+          <div class="col-12 text-center">
+            <!--
+              **==========
+              NOTE:
+              Please don't remove this copyright link unless you buy the license here https://untree.co/license/
+              **==========
+            -->
+
+            <p>
+              Copyright &copy;
+              <script>
+                document.write(new Date().getFullYear());
+              </script>
+              . All Rights Reserved. <br>&mdash; Designed and Developed  By -
+              <a href="https://flowercreeper.com/index.php">FlowerCreeper</a>
+              <!-- License information: https://untree.co/license/ -->
+            </p>
+
+          </div>
+        </div>
+      </div>
+      <!-- /.container -->
+    </div>
+    <!-- /.site-footer -->
+
+    <!-- Preloader -->
+    <div id="overlayer"></div>
+    <div class="loader">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/tiny-slider.js' %}"></script>
+    <script src="{% static 'js/aos.js' %}"></script>
+    <script src="{% static 'js/navbar.js' %}"></script>
+    <script src="{% static 'js/counter.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+  </body>
+</html>
+

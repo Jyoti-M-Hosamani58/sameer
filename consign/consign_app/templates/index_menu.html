@@ -1,0 +1,80 @@
+    <nav class="site-nav">
+        <div class="menu-bg-wrap">
+          <div class="site-navigation">
+            <a href="{% url 'index' %}}" class="logo m-0 float-start">Consignee Ease</a>
+
+            <ul
+              class="js-clone-nav d-none d-lg-inline-block text-start site-menu float-end"
+            >
+              <li class="active"><a href="{% url 'admin_home' %}">Home</a></li>
+
+              <li class="has-children">
+                <a href="#">Branch</a>
+                <ul class="dropdown">
+                  <li><a href="{% url 'branch' %}">Branch</a></li>
+				  <li><a href="{% url 'view_branch' %}">View Branch</a></li>
+				  <li><a href="{% url 'addlocation' %}">Station</a></li>
+				  <li><a href="{% url 'view_location' %}">View Station</a></li>
+                </ul>
+              </li>
+              <li class="has-children">
+                <a href="#">Driver & Vehicle</a>
+                <ul class="dropdown">
+                  <li><a href="{% url 'driver' %}">Driver Entry</a></li>
+				  <li><a href="{% url 'view_driver' %}">View Driver</a></li>
+                  <li><a href="{% url 'vehicle' %}">vehicle Entry</a></li>
+				  <li><a href="{% url 'view_vehicle' %}">View vehicle</a></li>
+                </ul>
+              </li>
+
+              <li><a href="{% url 'adminTripSheet' %}">Trip Sheet</a></li>
+              <li><a href="{% url 'admintrack_driver' %}">Location</a></li>
+              <li class="has-children">
+                <a href="#">Expenses</a>
+                <ul class="dropdown">
+                  <li><a href="{% url 'adminExpenses' %}">Add Expenses</a></li>
+                  <li><a href="{% url 'adminViewExpenses' %}">View Expenses</a></li>
+                </ul>
+              </li>
+              <li class="has-children">
+                <a href="#">Consignment Master</a>
+                <ul class="dropdown">
+                  <li><a href="{% url 'adminConsignorView' %}">ConsignorView</a></li>
+                  <li><a href="{% url 'adminConsigneeView' %}">Consignee View</a></li>
+                  <li><a href="{% url 'adminView_Consignment' %}">Consignment</a></li>
+                                    <li><a href="{% url 'deleteConsignment' %}">Deleted Consignment</a></li>
+
+                  <li><a href="{% url 'adminstaff_view' %}">Staff</a></li>
+                  <li><a href="{% url 'cashledger_form' %}">Ledger Entry</a></li>
+                  <li><a href="{% url 'combined_ledger_view' %}">Ledger</a></li>
+                </ul>
+              </li>
+              <li class="has-children">
+                <a href="#">Reports</a>
+                <ul class="dropdown">
+                  <li><a href="{% url 'consignmentStatus' %}">Consignment Status</a></li>
+                  <li><a href="{% url 'disel_report' %}">Diesel Report</a></li>
+                  <li><a href="{% url 'partywise_list' %}">Partywise Report</a></li>
+                  <li><a href="{% url 'unloaded_LR_report' %}">Unloaded Report</a></li>
+                  <li><a href="{% url 'advance_report' %}">Advance Report</a></li>
+                  <li><a href="{% url 'profit_report' %}">Profit Report</a></li>
+                  <li><a href="{% url 'account_report' %}">Account Report</a></li>
+                  <li><a href="{% url 'collection' %}">Collection</a></li>
+                </ul>
+              </li>
+
+
+              <li><a href="{% url 'index' %}">Logout</a></li>
+            </ul>
+
+            <a
+              href="#"
+              class="burger light me-auto float-end mt-1 site-menu-toggle js-menu-toggle d-inline-block d-lg-none"
+              data-toggle="collapse"
+              data-target="#main-navbar"
+            >
+              <span></span>
+            </a>
+          </div>
+        </div>
+    </nav>

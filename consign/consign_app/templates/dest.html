@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% if unique_destinations %}
+    <h4>Assign Positions to Destinations</h4>
+    <form method="POST" action="{% url 'saveDestinationPositions' %}">
+        {% csrf_token %}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Destination</th>
+                    <th>Position</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for destination in unique_destinations %}
+                    <tr>
+                        <td>{{ destination }}</td>
+                        <td>
+                            <input type="number" name="position_{{ destination }}" class="form-control" required>
+                            <input type="hidden" name="destination_{{ destination }}" value="{{ destination }}">
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <br/>
+        <button type="submit" class="btn btn-primary">Save Positions</button>
+    </form>
+{% endif %}
+
+</body>
+</html>

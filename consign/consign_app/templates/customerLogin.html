@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login with CAPTCHA</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
+        .login-container {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            width: 300px;
+        }
+        .login-container input {
+            padding: 10px;
+            margin: 10px 0;
+            width: 100%;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .captcha-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+        }
+        .captcha-text {
+            font-size: 20px;
+            font-weight: bold;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            background-color: #e6e6e6;
+            border-radius: 5px;
+            color: #333;
+            user-select: none;
+        }
+        .refresh-btn {
+            padding: 5px 10px;
+            font-size: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .refresh-btn:hover {
+            background-color: #45a049;
+        }
+        .login-container button {
+            padding: 10px 20px;
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .login-container button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Login</h2>
+        <form id="loginForm" action="{% url 'customerLogin' %}" method="POST" onsubmit="return validateCaptcha()">
+            {% csrf_token %}
+            <!-- Username Input -->
+            <input type="text" name="email" placeholder="Enter your username" required>
+
+
+            <!-- Submit Button -->
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <script>
+        // Function to generate random CAPTCHA
+        function generateCaptcha() {
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            let captcha = "";
+            for (let i = 0; i < 6; i++) {
+                captcha += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.getElementById("captcha").innerText = captcha;
+        }
+
+        // Function to validate CAPTCHA
+        function validateCaptcha() {
+            const generatedCaptcha = document.getElementById("captcha").innerText;
+            const userCaptcha = document.getElementById("captchaInput").value.trim();
+            if (userCaptcha !== generatedCaptcha) {
+                alert("Incorrect CAPTCHA. Please try again.");
+                generateCaptcha(); // Generate new CAPTCHA on failure
+                return false;
+            }
+            return true;
+        }
+
+        // Generate CAPTCHA on page load
+        window.onload = generateCaptcha;
+    </script>
+</body>
+</html>

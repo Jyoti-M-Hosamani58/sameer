@@ -1,0 +1,316 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Untree.co" />
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}" />
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap5" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="{% static 'fonts/icomoon/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'fonts/flaticon/font/flaticon.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'css/tiny-slider.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+    <title>Consignment</title>
+    <style>
+        table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif; /* You can change this to any suitable font */
+}
+
+        table, th, td {
+            border: 1px solid black;
+            font-size:10px;
+            color:black;
+        }
+
+        th, td {
+            padding: 4px;
+            text-align: left;
+        }
+
+        /* Print specific styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+
+            .printable, .printable * {
+                visibility: visible;
+            }
+
+            .printable {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+    <style>
+        /* CSS for horizontal scrolling */
+        .table-container {
+            overflow-x: auto; /* Enable horizontal scrolling */
+            -webkit-overflow-scrolling: touch; /* For smooth scrolling on iOS */
+        }
+
+        table {
+            width: 100%; /* Ensure the table takes full width */
+            min-width: 600px; /* Adjust based on the expected minimum width */
+        }
+    </style>
+</head>
+<body>
+    <div class="site-mobile-menu site-navbar-target">
+        <div class="site-mobile-menu-header">
+            <div class="site-mobile-menu-close">
+                <span class="icofont-close js-menu-toggle"></span>
+            </div>
+        </div>
+        <div class="site-mobile-menu-body"></div>
+    </div>
+
+    {% include 'index_menu.html' %}
+
+    <div class="hero page-inner overlay" style="background-image: url('{% static 'images/back2.jpg' %}')">
+        <div class="container">
+            <div class="row justify-content-center align-items-center">
+                <div class="col-lg-9 text-center mt-5">
+                    <h1 class="heading" data-aos="fade-up">Trip Sheet</h1>
+                    <nav aria-label="breadcrumb" data-aos="fade-up" data-aos-delay="200">
+                        <ol class="breadcrumb text-center justify-content-center">
+                            <li class="breadcrumb-item"><a href="{% url 'index' %}}">Home</a></li>
+                            <li class="breadcrumb-item active text-white-50" aria-current="page">TripSheet</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Only print content within this section -->
+    <div class="printable">
+    {% if trips %}
+    <br/>
+    <div class="table-responsive">
+        <form method="POST" action="{% url 'adminUpdate_view' %}">
+    {% csrf_token %}
+    <input type="hidden" name="vehicle_number" value="{{ trips.first.VehicalNo }}">
+<input type="hidden" name="trip_id" value="{{ trips.first.trip_id }}">
+    <input type="hidden" name="date" value="{{ trips.first.Date }}">
+        <button type="submit">Update</button>
+            <div class="table-container">
+            <table border="1" cellpadding="5" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th colspan="10" style="text-align: center;"><strong>{{ trips.first.branch }}</strong></th>
+                    </tr>
+                    <tr>
+                        <td colspan="3">DRIVER'S NAME: {{ trips.first.DriverName }}</td>
+                        <td colspan="2">DATE & TIME: {{ trips.first.Date }} {{ trips.first.Time }}</td>
+                        <td>Rate/LTR:<input type="text" id="ltrate" name="ltrate" VALUE="{{ trips.first.LTRate }}"/></td>
+                        <td colspan="4">LTR:<input type="text" id="ltr" name="ltr" value="{{ trips.first.Ltr }}"/></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">VEHICLE NO.: {{ trips.first.VehicalNo }}</td>
+                        <td>ADV GIVEN:<input type="text" id="advgiven" name="advgiven" value="{{ trips.first.AdvGiven }}"/></td>
+                        <td>Commission: <input type="text" id="commission" name="commission" value="{{ trips.first.commission }}"/></td>
+                        <td>Amount: <span id="total_value" id="total_value">{{ total_value }}</span></td>
+                    </tr>
+                    <tr>
+                        <th style="width: 5%;">SL/N</th>
+                        <th style="width: 5%;">LR No</th>
+                        <th style="width: 5%;">NO.OF ARTICLES(QTY)</th>
+                        <th style="width: 10%;">DESC OF GOODS</th>
+                        <th style="width: 10%;">DESTINATION</th>
+                        <th style="width: 10%;">CONSIGNEE</th>
+                        <th style="width: 10%;">AddConsign</th>
+                        <th style="width: 3%;">TO PAY</th>
+                        <th style="width: 3%;">PAID</th>
+                        <th style="width: 3%;">A/C</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for trip in trips %}
+                    <tr>
+                        <td style="border-top: none; border-bottom: none;">{{ forloop.counter }}</td>
+                        <td style="border-top: none; border-bottom: none;">{{ trip.LRno }}</td>
+                        <td style="border-top: none; border-bottom: none;">{{ trip.qty }}</td>
+                        <td style="border-top: none; border-bottom: none;">{{ trip.desc }}</td>
+                        <td style="border-top: none; border-bottom: none;">{{ trip.dest }}</td>
+                        <td style="border-top: none; border-bottom: none;">{{ trip.consignee }}</td>
+                        <td style="border-top: none; border-bottom: none;">{{ trip.username }}</td>
+                        <td style="border-top: none; border-bottom: none;">
+                            {% if trip.pay_status == 'toPay' %}
+                                {{ trip.total_cost }}
+                            {% endif %}
+                        </td>
+                        <td style="border-top: none; border-bottom: none;">
+                            {% if trip.pay_status == 'paid' %}
+                                {{ trip.total_cost }}
+                            {% endif %}
+                        </td>
+                        <td style="border-top: none; border-bottom: none;">
+                            {% if trip.pay_status == 'A/C' %}
+                                {{ trip.total_cost }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="2"><strong>Total:</strong></td>
+                        <td colspan="4">{{ total_qty }}</td>
+                        <td></td>
+                        <td>{{ grand_total.toPay }}</td>
+                        <td>{{ grand_total.paid }}</td>
+                        <td>{{ grand_total.AC }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+            </div>
+            <br/>
+<div class="table-container">
+            <table border="1" cellpadding="5" cellspacing="0">
+                <thead>
+                    <tr>
+                        <td colspan="6"><strong>HEAD WISE SUMMARY</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>HEAD</strong></td>
+                        <td><strong>FREIGHT</strong></td>
+                        <td><strong>HAMALI</strong></td>
+                        <td><strong>ST CHARGE</strong></td>
+                        <td><strong>DOOR CHARGE</strong></td>
+                        <td><strong>TOTAL</strong></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for status, details in summary.items %}
+                    <tr>
+                        <td style="border-top: none; border-bottom: none;"><strong>{{ status }}</strong></td>
+                        <td style="border-top: none; border-bottom: none;">{{ details.freight }}</td>
+                        <td style="border-top: none; border-bottom: none;">{{ details.hamali }}</td>
+                        <td style="border-top: none; border-bottom: none;">{{ details.st_charge }}</td>
+                        <td style="border-top: none; border-bottom: none;">{{ details.door_charge }}</td>
+                        <td style="border-top: none; border-bottom: none;">{{ details.total_cost }}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td><strong>Total:</strong></td>
+                        <td>{{ grand_total.grand_freight }}</td>
+                        <td>{{ grand_total.grand_hamali }}</td>
+                        <td>{{ grand_total.grand_st_charge }}</td>
+                        <td>{{ grand_total.grand_door_charge }}</td>
+                        <td>{{ grand_total.grand_total }}</td>
+                    </tr>
+                </tbody>
+            </table>
+</div>
+        </form>
+        </div>
+        {% endif %}
+    </div>
+    <script>
+    // Function to calculate and update total value
+function calculateTotalValue() {
+    // Get values from the input fields
+    const ltrate = parseFloat(document.getElementById('ltrate').value) || 0;
+    const ltr = parseFloat(document.getElementById('ltr').value) || 0;
+    const advgiven = parseFloat(document.getElementById('advgiven').value) || 0;
+    const commission = parseFloat(document.getElementById('commission').value) || 0;
+
+    // Perform the calculation
+    const totalValue = (ltrate * ltr) + advgiven + commission;
+
+    // Update the total_value span
+    document.getElementById('total_value').textContent = totalValue.toFixed(2);
+}
+
+// Function to set up event listeners
+function setupEventListeners() {
+    // Attach input event listeners to update total value on changes
+    document.getElementById('ltrate').addEventListener('input', calculateTotalValue);
+    document.getElementById('ltr').addEventListener('input', calculateTotalValue);
+    document.getElementById('advgiven').addEventListener('input', calculateTotalValue);
+    document.getElementById('commission').addEventListener('input', calculateTotalValue);
+
+    // Calculate total value initially
+    calculateTotalValue();
+}
+
+// Initialize event listeners on page load
+window.onload = setupEventListeners;
+
+         function printAndDelete() {
+        // Trigger the print dialog
+        window.print();
+
+        // Send an AJAX request to delete the data
+        $.ajax({
+            type: 'POST',
+            url: '{% url "delete_trip_sheet_data" %}', // Ensure this URL pattern matches your Django URL configuration
+            data: {
+                'vehical': '{{ request.POST.vehical }}',
+                't3': '{{ request.POST.t3 }}',
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                if (response.status === 'success') {
+                    console.log('Data deleted successfully.');
+                    // Optionally, you can redirect or notify the user
+                } else {
+                    console.error('Error deleting data: ', response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX error: ', status, error);
+            }
+        });
+    }
+    </script>
+
+    <div class="no-print">
+        <div class="row mt-5">
+            <div class="col-12 text-center">
+                <p>
+                    Copyright &copy;
+                    <script>
+                        document.write(new Date().getFullYear());
+                    </script>
+                    . All Rights Reserved. <br>&mdash; Designed and Developed  By -
+                    <a href="https://flowercreeper.com/index.php">FlowerCreeper</a>
+                </p>
+            </div>
+        </div>
+        <div id="overlayer"></div>
+        <div class="loader">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static 'js/tiny-slider.js' %}"></script>
+        <script src="{% static 'js/aos.js' %}"></script>
+        <script src="{% static 'js/navbar.js' %}"></script>
+        <script src="{% static 'js/counter.js' %}"></script>
+        <script src="{% static 'js/custom.js' %}"></script>
+    </div>
+</body>
+</html>
